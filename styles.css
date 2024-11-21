@@ -177,10 +177,29 @@
 /* Style for the select dropdown */
 .type-dropdown-container select {
   padding: 5px;
-  font-size: 16px;
+  font-family: 'futurept_b1';
+  font-size: 14px;
   width: 100%;
   max-width: 300px;
   margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+/* Ensure dropdown is block-level */
+.dropdown {
+  display: block; /* Make the select element block-level */
+  width: 100%;     /* Ensure it takes up 50% of the available container width */
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+#mapGroupDropdownContainer,
+#mapsListDropdownContainer {
+  width: 100%;  /* Make sure containers are full width */
+  /* padding: 5px; */
 }

@@ -82,10 +82,22 @@ function createTypeDropdown(container) {
   const typeDropdownContainer = document.createElement('div');
   typeDropdownContainer.classList.add('type-dropdown-container');
 
-  // Create a select element with 3 options (Type 1, Type 2, Type 3)
+  // Create a select element with options
   const typeDropdown = document.createElement('select');
+
+  // Add a default "Select Type" option
+  const defaultOption = document.createElement('option');
+
+  defaultOption.value = '';  // Empty value for "no type selected"
+  defaultOption.textContent = 'Select Type';
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  typeDropdown.appendChild(defaultOption);
+
+  // Define options for Type 1, Type 2, and Type 3
   const typeOptions = ['Type 1', 'Type 2', 'Type 3'];
 
+  // Add the options for Type 1, Type 2, and Type 3
   typeOptions.forEach(type => {
     const option = document.createElement('option');
     option.value = type.toLowerCase();
@@ -124,23 +136,28 @@ function toggleDropdownVisibility(selectedType) {
 // Modify the `createMapGroupAndMapDropdowns` function to hide them initially
 function createMapGroupAndMapDropdowns(container) {
   // Create and append the map group dropdown container
-  const mapGroupDropdownContainer = document.createElement('div');
-  mapGroupDropdownContainer.id = 'mapGroupDropdownContainer';
-  mapGroupDropdownContainer.style.display = 'none'; // Initially hidden
+    const mapGroupDropdownContainer = document.createElement('div');
+    mapGroupDropdownContainer.id = 'mapGroupDropdownContainer';
+    mapGroupDropdownContainer.style.display = 'none'; // Initially hidden
 
-  const mapGroupOptions = Object.keys(mapGroups);
-  const mapGroupDropdown = createDropdown(mapGroupOptions, 'Select Map Group');
-  mapGroupDropdownContainer.appendChild(mapGroupDropdown);
-  container.appendChild(mapGroupDropdownContainer);
+    const mapGroupOptions = Object.keys(mapGroups);
+    const mapGroupDropdown = createDropdown(mapGroupOptions, 'Select Map Group');
+    mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
+    mapGroupDropdownContainer.appendChild(mapGroupDropdown);
+    container.appendChild(mapGroupDropdownContainer);
+    mapGroupDropdown.style.width = '100%';
 
-  // Create and append the maps list dropdown container
-  const mapsListDropdownContainer = document.createElement('div');
-  mapsListDropdownContainer.id = 'mapsListDropdownContainer';
-  mapsListDropdownContainer.style.display = 'none'; // Initially hidden
+    // Create and append the maps list dropdown container
+    const mapsListDropdownContainer = document.createElement('div');
+    mapsListDropdownContainer.id = 'mapsListDropdownContainer';
+    mapsListDropdownContainer.style.display = 'none'; // Initially hidden
 
-  const mapsListDropdown = createDropdown([], 'Select Map');
-  mapsListDropdownContainer.appendChild(mapsListDropdown);
-  container.appendChild(mapsListDropdownContainer);
+    const mapsListDropdown = createDropdown([], 'Select Map');
+    mapsListDropdown.classList.add('dropdown');  // Apply common dropdown style
+    mapsListDropdownContainer.appendChild(mapsListDropdown);
+    container.appendChild(mapsListDropdownContainer);
+    mapsListDropdown.style.width = '100%';
+
 
   // Store the placeholder option for maps list to avoid it being overwritten
   const placeholderOptionMap = mapsListDropdown.querySelector('option');
