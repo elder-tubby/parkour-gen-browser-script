@@ -168,3 +168,19 @@
 .paste-start-button {
   width: 130px;
 }
+
+/* Style for the dropdown container */
+.type-dropdown-container {
+  margin-bottom: 20px;
+}
+
+/* Style for the select dropdown */
+.type-dropdown-container select {
+  padding: 5px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

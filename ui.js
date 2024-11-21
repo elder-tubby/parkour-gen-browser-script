@@ -60,7 +60,7 @@ function createMainUI() {
   fetchMapGroups(groupURL)
     .then(() => {
 
-      createTypeButtons(contentWrapper);
+      createTypeDropdown(contentWrapper);
 
       createMapGroupAndMapDropdowns(contentWrapper); // Add map group dropdowns
 
@@ -77,22 +77,30 @@ function createMainUI() {
   return container;
 }
 
-function createTypeButtons(container) {
-  // Create the row container for the buttons
-  const typeButtonContainer = document.createElement('div');
-  typeButtonContainer.classList.add('type-button-container');
+function createTypeDropdown(container) {
+  // Create the dropdown container
+  const typeDropdownContainer = document.createElement('div');
+  typeDropdownContainer.classList.add('type-dropdown-container');
 
-  // Create and append buttons for Type 1, 2, and 3
-  const type1Button = createStyledButton('Type 1', () => toggleDropdownVisibility('type1'));
-  const type2Button = createStyledButton('Type 2', () => toggleDropdownVisibility('type2'));
-  const type3Button = createStyledButton('Type 3', () => toggleDropdownVisibility('type3'));
+  // Create a select element with 3 options (Type 1, Type 2, Type 3)
+  const typeDropdown = document.createElement('select');
+  const typeOptions = ['Type 1', 'Type 2', 'Type 3'];
 
-  typeButtonContainer.appendChild(type1Button);
-  typeButtonContainer.appendChild(type2Button);
-  typeButtonContainer.appendChild(type3Button);
+  typeOptions.forEach(type => {
+    const option = document.createElement('option');
+    option.value = type.toLowerCase();
+    option.textContent = type;
+    typeDropdown.appendChild(option);
+  });
 
-  // Append the typeButtonContainer to the main container
-  container.appendChild(typeButtonContainer);
+  // Add event listener for when the dropdown value changes
+  typeDropdown.addEventListener('change', function () {
+    toggleDropdownVisibility(typeDropdown.value);
+  });
+
+  // Append the dropdown to the container
+  typeDropdownContainer.appendChild(typeDropdown);
+  container.appendChild(typeDropdownContainer);
 }
 
 function toggleDropdownVisibility(selectedType) {
@@ -105,7 +113,7 @@ function toggleDropdownVisibility(selectedType) {
   mapsListDropdownContainer.style.display = 'none';
 
   // Show the selected dropdown UI
-  if (selectedType === 'type1') {
+  if (selectedType === 'type 1') {
     mapGroupDropdownContainer.style.display = 'block'; // Show Map Group Dropdown
     mapsListDropdownContainer.style.display = 'block'; // Show Maps List Dropdown
   }
