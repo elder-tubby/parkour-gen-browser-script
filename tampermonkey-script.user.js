@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.3
 // @description  A script that loads JS files and CSS from CDN
-// @author       You
+// @author       eldertubby
 // @match        *://bonk.io/*
 // @grant        none
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script.js
