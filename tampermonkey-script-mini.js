@@ -8,7 +8,7 @@
 // @match        https://bonk.io/gameframe-release.html
 // @grant        none
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/parkour-gen-script-mini.js
-// @updateURL    https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/tampermonkey-script-mini.js
-// @downloadURL  https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/tampermonkey-script-mini.js
+// @updateURL    https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/tampermonkey-script-mini.js
+// @downloadURL  https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/tampermonkey-script-mini.js
 // ==/UserScript==
 
