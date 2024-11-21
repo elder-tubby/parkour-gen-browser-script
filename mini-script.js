@@ -101,13 +101,12 @@ style.innerHTML = `
 
 `;
 
-// Append the <style> element to the <head> of the document
 document.head.appendChild(style);
 
 function createContainer() {
     const container = document.createElement('div');
     container.id = 'mainUIPanel';
-    makeElementDraggable(container); // Makes the container draggable
+    makeElementDraggable(container); ]
     return container;
 }
 
@@ -127,28 +126,27 @@ function createContentWrapper() {
 
 function createToggleButton(container, contentWrapper) {
     const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = '-'; // Start with a "-" icon
+    toggleButton.innerHTML = '-'; 
     toggleButton.classList.add('toggle-button');
 
-    let isCollapsed = false; // Track if collapsed or expanded
+    let isCollapsed = false; 
 
     toggleButton.addEventListener('click', () => {
         if (!isCollapsed) {
-            // Collapse the container
             contentWrapper.style.display = 'none';
-            container.style.height = '30px'; // Shrink to just show the toggle button
-            container.style.overflow = 'hidden'; // Hide scrollbars when collapsed
-            toggleButton.innerHTML = '+'; // Change to "+" when collapsed
+            container.style.height = '30px'; 
+            container.style.overflow = 'hidden';
+            toggleButton.innerHTML = '+';
         } else {
-            // Expand the container
+
             contentWrapper.style.display = 'block';
-            container.style.height = ''; // Auto height based on content
-            toggleButton.innerHTML = '-'; // Change to "-" when expanded
+            container.style.height = ''; 
+            toggleButton.innerHTML = '-'; 
           }
         isCollapsed = !isCollapsed;
     });
 
-    container.appendChild(toggleButton); // Append toggle button to the container
+    container.appendChild(toggleButton); 
 }
 
 function createMainUI() {
@@ -156,10 +154,10 @@ function createMainUI() {
     const heading = createHeading();
     const contentWrapper = createContentWrapper();
 
-    container.appendChild(heading); // Append heading to the container
-    container.appendChild(contentWrapper); // Append contentWrapper to the container
+    container.appendChild(heading); 
+    container.appendChild(contentWrapper); 
     const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-generator-browser-script/refs/heads/main/map-data/groups.json';
-    createToggleButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
+    createToggleButton(container, contentWrapper); 
 
     const pasteAndStartButton = createStyledButton(
         'Paste Data And Start',
