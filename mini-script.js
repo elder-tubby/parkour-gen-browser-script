@@ -106,7 +106,7 @@ document.head.appendChild(style);
 function createContainer() {
     const container = document.createElement('div');
     container.id = 'mainUIPanel';
-    makeElementDraggable(container); ]
+    makeElementDraggable(container); 
     return container;
 }
 
