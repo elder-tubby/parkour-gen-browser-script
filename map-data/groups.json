@@ -1,0 +1,6 @@
+{
+  "Group 1": ["map1.json", "map2.json", "map3.json"],
+  "Group 2": ["map4.json", "map5.json", "map6.json"],
+  "Group 3": ["map7.json", "map8.json", "map9.json"],
+  "Group 4": ["map10.json", "map11.json", "map12.json"]
+}
