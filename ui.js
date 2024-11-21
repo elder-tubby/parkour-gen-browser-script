@@ -54,11 +54,14 @@ function createMainUI() {
 
   container.appendChild(heading); // Append heading to the container
   container.appendChild(contentWrapper); // Append contentWrapper to the container
-  const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-generator-browser-script/refs/heads/main/map-data/groups.json';
+  const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json';
 
   // Fetch map groups from GitHub
   fetchMapGroups(groupURL)
     .then(() => {
+
+      createTypeButtons(contentWrapper);
+
       createMapGroupAndMapDropdowns(contentWrapper); // Add map group dropdowns
 
       createMapAndTimerUI(contentWrapper); // Add your other UI elements here
@@ -73,6 +76,99 @@ function createMainUI() {
   document.body.appendChild(container);
   return container;
 }
+
+function createTypeButtons(container) {
+  // Create the row container for the buttons
+  const typeButtonContainer = document.createElement('div');
+  typeButtonContainer.classList.add('type-button-container');
+
+  // Create and append buttons for Type 1, 2, and 3
+  const type1Button = createStyledButton('Type 1', () => toggleDropdownVisibility('type1'));
+  const type2Button = createStyledButton('Type 2', () => toggleDropdownVisibility('type2'));
+  const type3Button = createStyledButton('Type 3', () => toggleDropdownVisibility('type3'));
+
+  typeButtonContainer.appendChild(type1Button);
+  typeButtonContainer.appendChild(type2Button);
+  typeButtonContainer.appendChild(type3Button);
+
+  // Append the typeButtonContainer to the main container
+  container.appendChild(typeButtonContainer);
+}
+
+function toggleDropdownVisibility(selectedType) {
+  // Hide all dropdown UI elements
+  const mapGroupDropdownContainer = document.getElementById('mapGroupDropdownContainer');
+  const mapsListDropdownContainer = document.getElementById('mapsListDropdownContainer');
+
+  // Default behavior: Hide both dropdown containers
+  mapGroupDropdownContainer.style.display = 'none';
+  mapsListDropdownContainer.style.display = 'none';
+
+  // Show the selected dropdown UI
+  if (selectedType === 'type1') {
+    mapGroupDropdownContainer.style.display = 'block'; // Show Map Group Dropdown
+    mapsListDropdownContainer.style.display = 'block'; // Show Maps List Dropdown
+  }
+
+  // You can add more conditions for 'type2' and 'type3' if needed
+}
+
+// Modify the `createMapGroupAndMapDropdowns` function to hide them initially
+function createMapGroupAndMapDropdowns(container) {
+  // Create and append the map group dropdown container
+  const mapGroupDropdownContainer = document.createElement('div');
+  mapGroupDropdownContainer.id = 'mapGroupDropdownContainer';
+  mapGroupDropdownContainer.style.display = 'none'; // Initially hidden
+
+  const mapGroupOptions = Object.keys(mapGroups);
+  const mapGroupDropdown = createDropdown(mapGroupOptions, 'Select Map Group');
+  mapGroupDropdownContainer.appendChild(mapGroupDropdown);
+  container.appendChild(mapGroupDropdownContainer);
+
+  // Create and append the maps list dropdown container
+  const mapsListDropdownContainer = document.createElement('div');
+  mapsListDropdownContainer.id = 'mapsListDropdownContainer';
+  mapsListDropdownContainer.style.display = 'none'; // Initially hidden
+
+  const mapsListDropdown = createDropdown([], 'Select Map');
+  mapsListDropdownContainer.appendChild(mapsListDropdown);
+  container.appendChild(mapsListDropdownContainer);
+
+  // Store the placeholder option for maps list to avoid it being overwritten
+  const placeholderOptionMap = mapsListDropdown.querySelector('option');
+
+  // Event listener to update the maps dropdown based on selected group
+  mapGroupDropdown.addEventListener('change', function () {
+    const selectedGroup = mapGroupDropdown.value;
+    const maps = mapGroups[selectedGroup] || [];
+
+    // Clear existing maps options and repopulate
+    mapsListDropdown.innerHTML = '';
+    mapsListDropdown.appendChild(placeholderOptionMap);  // Keep the placeholder
+
+    // Populate maps dropdown
+    maps.forEach(map => {
+      const option = document.createElement('option');
+      option.value = map;
+      option.text = map.replace('.json', ''); // Display name without extension
+      mapsListDropdown.appendChild(option);
+    });
+  });
+
+  // Event listener to load selected map JSON file
+  mapsListDropdown.addEventListener('change', function () {
+    const selectedMap = mapsListDropdown.value;
+    const selectedGroup = mapGroupDropdown.value;
+
+    if (selectedGroup && selectedMap) {
+      const mapFileName = mapGroups[selectedGroup].find(map => map === selectedMap);
+      if (mapFileName) {
+        loadMapJSON(mapFileName);
+      }
+    }
+  });
+}
+
 
 // Fetch map groups from GitHub
 function fetchMapGroups(groupURL) {
@@ -118,57 +214,10 @@ function createDropdown(options, placeholderText) {
   return dropdown;
 }
 
-function createMapGroupAndMapDropdowns(container) {
-
-
-  // Create and append the map group dropdown
-  const mapGroupOptions = Object.keys(mapGroups);
-  const mapGroupDropdown = createDropdown(mapGroupOptions, 'Select Map Group');
-  container.appendChild(mapGroupDropdown);
-
-  // Create and append the maps list dropdown (initially empty)
-  const mapsListDropdown = createDropdown([], 'Select Map');
-  container.appendChild(mapsListDropdown);
-
-  // Store the placeholder option for maps list to avoid it being overwritten
-  const placeholderOptionMap = mapsListDropdown.querySelector('option');
-
-  // Event listener to update the maps dropdown based on selected group
-  mapGroupDropdown.addEventListener('change', function () {
-    const selectedGroup = mapGroupDropdown.value;
-    const maps = mapGroups[selectedGroup] || [];
-
-    // Clear existing maps options and repopulate
-    mapsListDropdown.innerHTML = '';
-    mapsListDropdown.appendChild(placeholderOptionMap);  // Keep the placeholder
-
-    // Populate maps dropdown
-    maps.forEach(map => {
-      const option = document.createElement('option');
-      option.value = map;
-      option.text = map.replace('.json', ''); // Display name without extension
-      mapsListDropdown.appendChild(option);
-    });
-  });
-
-  // Event listener to load selected map JSON file
-  mapsListDropdown.addEventListener('change', function () {
-    const selectedMap = mapsListDropdown.value;
-    const selectedGroup = mapGroupDropdown.value;
-
-    if (selectedGroup && selectedMap) {
-      const mapFileName = mapGroups[selectedGroup].find(map => map === selectedMap);
-      if (mapFileName) {
-        loadMapJSON(mapFileName);
-      }
-    }
-  });
-
-}
 
 // Function to load the map JSON data from GitHub
 function loadMapJSON(mapFileName) {
-  const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-generator-browser-script/refs/heads/main/map-data/${mapFileName}`;
+  const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapFileName}`;
 
   fetch(mapURL)
     .then(response => {
@@ -263,99 +312,116 @@ function showNotification(message, duration = 3000) {
     notificationElement.style.display = 'none';
   }, duration);
 }
-
 function createMapAndTimerUI(container) {
-  container.classList.add('map-timer-container'); // Add the CSS class
+  container.classList.add('map-timer-container');
 
-  const createMapButton = createStyledButton('Create', function () {
-    createAndSetMap(currentMapData);
-  });
+  // Create UI elements
+  const mapButtonContainer = createMapButtonContainer();
+  const timerDisplay = createTimerDisplay();
+  const timerButtonContainer = createTimerButtonContainer();
+  const controlButtonContainer = createControlButtonContainer();
+  const pasteAndStartButton = createPasteAndStartButton();
+
+  // Append UI elements to container
+  container.appendChild(mapButtonContainer);
+  container.appendChild(timerDisplay);
+  container.appendChild(timerButtonContainer);
+  container.appendChild(controlButtonContainer);
+  container.appendChild(pasteAndStartButton);
+}
+
+function createMapButtonContainer() {
+  const container = document.createElement('div');
+  container.classList.add('map-button-container');
+
+  const createMapButton = createStyledButton('Create', () => createAndSetMap(currentMapData));
   createMapButton.classList.add('map-button');
 
-  const createAndStartButton = createStyledButton('Create And Start', function () {
-    createAndSetMap(currentMapData);
-    if (
-      document.getElementById('newbonklobby').style.display === 'none'
-    ) {
-      window.parkourGenerator.keepPositions = true;
-    }
-      window.bonkHost.startGame();
-      console.log(window.bonkHost);
-    
-
-  });
+  const createAndStartButton = createStyledButton('Create And Start', createAndStartGame);
   createAndStartButton.classList.add('map-button');
 
-  // Create a container div to hold both buttons
-  const mapButtonContainer = document.createElement('div');
-  mapButtonContainer.classList.add('map-button-container'); // Add CSS class for row layout
+  container.appendChild(createMapButton);
+  container.appendChild(createAndStartButton);
 
-  // Append both buttons to the container
-  mapButtonContainer.appendChild(createMapButton);
-  mapButtonContainer.appendChild(createAndStartButton);
+  return container;
+}
 
-  // Add the container with both buttons to the main container
-  container.appendChild(mapButtonContainer);
+function createAndStartGame() {
+  createAndSetMap(currentMapData);
 
+  const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
+  if (isLobbyHidden) {
+    window.parkourGenerator.keepPositions = true;
+  }
 
+  window.bonkHost.startGame();
+  console.log(window.bonkHost);
+}
+
+function createTimerDisplay() {
   const timerDisplay = document.createElement('div');
   timerDisplay.id = 'timerDisplay';
   timerDisplay.classList.add('timer-display');
   timerDisplay.innerHTML = '00:00';
 
-  const timerButtonContainer = document.createElement('div');
-  timerButtonContainer.classList.add('timer-button-container');
+  return timerDisplay;
+}
+
+function createTimerButtonContainer() {
+  const container = document.createElement('div');
+  container.classList.add('timer-button-container');
 
   const incrementButton = createStyledButton('+10 Sec', incrementTimer);
   const decrementButton = createStyledButton('-10 Sec', decrementTimer);
 
-  timerButtonContainer.appendChild(incrementButton);
-  timerButtonContainer.appendChild(decrementButton);
+  container.appendChild(incrementButton);
+  container.appendChild(decrementButton);
 
-  const controlButtonContainer = document.createElement('div');
-  controlButtonContainer.classList.add('control-button-container');
+  return container;
+}
+
+function createControlButtonContainer() {
+  const container = document.createElement('div');
+  container.classList.add('control-button-container');
 
   const startButton = createStyledButton('Start', startTimer);
   const stopButton = createStyledButton('Stop', stopTimer);
   const resetButton = createStyledButton('Reset', resetTimer);
 
-  controlButtonContainer.appendChild(startButton);
-  controlButtonContainer.appendChild(stopButton);
-  controlButtonContainer.appendChild(resetButton);
+  container.appendChild(startButton);
+  container.appendChild(stopButton);
+  container.appendChild(resetButton);
 
-  // container.appendChild(createMapButton);
-  container.appendChild(timerDisplay);
-  container.appendChild(timerButtonContainer);
-  container.appendChild(controlButtonContainer);
-
-  buttonsInactive = false;
-
-  const pasteAndStartButton = createStyledButton(
-    'Paste Data And Start',
-    async function () {
-      try {
-        const text = await navigator.clipboard.readText();
-        if (text.trim()) {
-          showNotification('Map generated successfully! Starting the map...');
-          createAndSetMap(text);
-          if (
-            document.getElementById('newbonklobby').style.display === 'none'
-          ) {
-            window.parkourGenerator.keepPositions = false;
-          }
-          window.bonkHost.startGame();
-        } else {
-          showNotification('Clipboard is empty. Copy map data first.');
-        }
-      } catch (err) {
-        console.error('Failed to read clipboard contents: ', err);
-        showNotification('Failed to read clipboard.');
-      }
-    }
-  );
-  pasteAndStartButton.classList.add('paste-start-button');
-  container.appendChild(pasteAndStartButton);
+  return container;
 }
 
+function createPasteAndStartButton() {
+  const button = createStyledButton('Paste Data And Start', pasteAndStart);
+  button.classList.add('paste-start-button');
+
+  return button;
+}
+
+async function pasteAndStart() {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text.trim()) {
+      showNotification('Map generated successfully! Starting the map...');
+      createAndSetMap(text);
+
+      const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
+      if (isLobbyHidden) {
+        window.parkourGenerator.keepPositions = false;
+      }
+
+      window.bonkHost.startGame();
+    } else {
+      showNotification('Clipboard is empty. Copy map data first.');
+    }
+  } catch (err) {
+    console.error('Failed to read clipboard contents: ', err);
+    showNotification('Failed to read clipboard.');
+  }
+}
 
 console.log("Loaded ui.js");

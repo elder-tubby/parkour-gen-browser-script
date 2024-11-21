@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Parkour Generator Using GH
 // @namespace    http://tampermonkey.net/
-// @version      1.6
+// @version      1.7
 // @description  A script that loads JS files and CSS from CDN
 // @author       You
 // @match        *://bonk.io/*
