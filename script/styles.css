@@ -237,19 +237,19 @@
   margin-bottom: 20px;
   
 }
-
-/* Style for the select dropdown */
-.type-dropdown-container select {
+.type-dropdown {
   padding: 5px;
   font-family: 'futurept_b1';
   font-size: 14px;
   width: 100%;
   max-width: 300px;
   margin-top: 10px;
+  margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
   
 }
+
 
 /* Ensure dropdown is block-level */
 .dropdown {
