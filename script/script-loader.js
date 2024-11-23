@@ -16,7 +16,7 @@
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/injector.js     <!-- Code injector functionality -->
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/ui.js           <!-- UI-related code -->
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/main.js         <!-- Main entry point script -->
-// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/css-styles.js    <!-- Styles and CSS -->
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/styles/css-styles.js    <!-- Styles and CSS -->
 // @updateURL    https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/script/script-loader.js
 // @downloadURL  https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/script/script-loader.js
 // ==/UserScript==

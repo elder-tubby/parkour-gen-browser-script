@@ -175,9 +175,9 @@ style.innerHTML = `
   padding: 8px;
   text-align: center;
   /* border: 1px solid; */
-  border-radius: 4px;
+  /* border-radius: 4px; */
   /* Rounded corners */
-  background-color: #f0f0f0b4;
+  /* background-color: #f0f0f0b4; */
   /* Light background to visually separate */
 }
 
@@ -240,19 +240,19 @@ style.innerHTML = `
   margin-bottom: 20px;
   
 }
-
-/* Style for the select dropdown */
-.type-dropdown-container select {
+.type-dropdown {
   padding: 5px;
   font-family: 'futurept_b1';
   font-size: 14px;
   width: 100%;
   max-width: 300px;
   margin-top: 10px;
+  margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
   
 }
+
 
 /* Ensure dropdown is block-level */
 .dropdown {
