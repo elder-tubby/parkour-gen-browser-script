@@ -5,7 +5,6 @@ function createMainUI() {
 
   container.appendChild(heading); // Append heading to the container
   container.appendChild(contentWrapper); // Append contentWrapper to the container
-  const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json';
 
   // Fetch map groups from GitHub
   fetchMapGroups(groupURL)
@@ -14,9 +13,6 @@ function createMainUI() {
       createTypeDropdown(contentWrapper);
 
       createUiForType1(contentWrapper); // Add map group dropdowns
-
-
-
 
       createMapAndTimerUI(contentWrapper); // Add your other UI elements here
 
@@ -30,6 +26,8 @@ function createMainUI() {
   document.body.appendChild(container);
   return container;
 }
+
+
 
 function createMainContainer() {
   const container = document.createElement('div');
@@ -79,28 +77,13 @@ function createToggleButton(container, contentWrapper) {
 }
 
 function createTypeDropdown(container) {
-  // Create the select element directly
-  const typeDropdown = document.createElement('select');
-  typeDropdown.classList.add('type-dropdown');  // Add a custom class
-
-  // Add a default "Select Type" option
-  const defaultOption = document.createElement('option');
-  defaultOption.value = '';  // Empty value for "no type selected"
-  defaultOption.textContent = 'Select Type';
-  defaultOption.disabled = true;
-  defaultOption.selected = true;
-  typeDropdown.appendChild(defaultOption);
-
   // Define options for Type 1, Type 2, and Type 3
   const typeOptions = ['Type 1', 'Type 2', 'Type 3'];
 
-  // Add the options for Type 1, Type 2, and Type 3
-  typeOptions.forEach(type => {
-    const option = document.createElement('option');
-    option.value = type.toLowerCase();
-    option.textContent = type;
-    typeDropdown.appendChild(option);
-  });
+  // Create the dropdown using the helper function
+  const typeDropdown = createDropdown(typeOptions, 'Select Type');
+  typeDropdown.classList.add('type-dropdown');  // Add a custom class
+  typeDropdown.style.width= '100%';
 
   // Add event listener for when the dropdown value changes
   typeDropdown.addEventListener('change', function () {
@@ -109,23 +92,6 @@ function createTypeDropdown(container) {
 
   // Append the dropdown directly to the container
   container.appendChild(typeDropdown);
-}
-
-function toggleTypeDropdownVisibility(selectedType) {
-  // Hide all dropdown UI elements
-  const mapGroupDropdownContainer = document.getElementById('mapGroupDropdownContainer');
-  const mapsListDropdownContainer = document.getElementById('mapsListDropdownContainer');
-
-  const type1ChildrenContainer = document.getElementById('type1-children-container');
-
-  type1ChildrenContainer.style.display = 'none';
-
-  // Show the selected dropdown UI
-  if (selectedType === 'type 1') {
-    type1ChildrenContainer.style.display = 'block';
-  }
-
-  // You can add more conditions for 'type2' and 'type3' if needed
 }
 
 function createUiForType1(container) {

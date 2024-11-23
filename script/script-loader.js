@@ -7,9 +7,15 @@
 // @match        https://bonkisback.io/gameframe-release.html
 // @match        https://bonk.io/gameframe-release.html
 // @grant        none
-// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/script.js
-// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/main.js
+// @license      GPL or MIT
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/map-creator.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/map-fetcher.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/timer.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/injector.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/cap-event-manager.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/utils.js
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/ui.js
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/main.js
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/css-styles.js
 // @updateURL    https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/script/script-loader.js
 // @downloadURL  https://github.com/elder-tubby/parkour-gen-browser-script/raw/refs/heads/main/script/script-loader.js
