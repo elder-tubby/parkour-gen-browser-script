@@ -1,9 +1,9 @@
-const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json';
+const mapsSturctureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
 
 // Fetch map groups from GitHub
-function fetchMapGroups(groupURL) {
+function fetchMapsStructure(mapsSturctureURL) {
 
-    return fetch(groupURL)
+    return fetch(mapsSturctureURL)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load groups JSON');
@@ -11,7 +11,7 @@ function fetchMapGroups(groupURL) {
             return response.json();
         })
         .then(data => {
-            mapGroups = data;  // Store the fetched data in mapGroups
+            mapsStructure = data;  
         })
         .catch(error => {
             console.error('Error fetching groups data:', error);

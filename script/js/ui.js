@@ -7,12 +7,14 @@ function createMainUI() {
   container.appendChild(contentWrapper); // Append contentWrapper to the container
 
   // Fetch map groups from GitHub
-  fetchMapGroups(groupURL)
+  fetchMapsStructure(mapsSturctureURL)
     .then(() => {
 
       createTypeDropdown(contentWrapper);
 
       createUiForType1(contentWrapper); // Add map group dropdowns
+
+      createUiForType2(contentWrapper); // Add map group dropdowns
 
       createMapAndTimerUI(contentWrapper); // Add your other UI elements here
 
@@ -20,8 +22,8 @@ function createMainUI() {
 
     })
     .catch(error => {
-      console.error('Error loading map groups:', error);
-      alert('Failed to load map data. Please try again later.');
+      console.error('Error loading map structure file:', error);
+      alert('Failed to load map structure. Please try again later.');
     });
   document.body.appendChild(container);
   return container;
@@ -83,7 +85,7 @@ function createTypeDropdown(container) {
   // Create the dropdown using the helper function
   const typeDropdown = createDropdown(typeOptions, 'Select Type');
   typeDropdown.classList.add('type-dropdown');  // Add a custom class
-  typeDropdown.style.width= '100%';
+  typeDropdown.style.width = '100%';
 
   // Add event listener for when the dropdown value changes
   typeDropdown.addEventListener('change', function () {
@@ -95,7 +97,10 @@ function createTypeDropdown(container) {
 }
 
 function createUiForType1(container) {
-  // Create and append the map group dropdown
+  const firstType = Object.keys(mapsStructure)[0];  // This gets the first key (e.g., "Type 1")
+
+  // Set mapGroups to the groups of the first type
+  const mapGroups = mapsStructure[firstType]  // Create and append the map group dropdown
   const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');
   mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
   mapGroupDropdown.style.width = '100%';
@@ -157,6 +162,50 @@ function createUiForType1(container) {
   type1ChildrenContainer.style.display = 'none';
 
   container.appendChild(type1ChildrenContainer);
+}
+
+function createUiForType2(container) {
+
+  
+  // Dynamically get the second type from mapsStructure
+  const secondType = Object.keys(mapsStructure)[1];  // This gets the second type, e.g., "Type 2"
+
+  // Set mapGroups to the groups of the second type
+  const mapGroups = mapsStructure[secondType];
+
+  // Create and append the map group dropdown
+  const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');
+  mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
+  mapGroupDropdown.style.width = '100%';
+
+
+  // Event listener to update the maps dropdown based on selected group
+  mapGroupDropdown.addEventListener('change', function () {
+    const selectedGroup = mapGroupDropdown.value;
+    const maps = mapGroups[selectedGroup] || [];
+  });
+
+  const startFirstMapButton = createStyledButton('Start First Map', () => {
+    const firstMap = mapGroups[Object.keys(mapGroups)[0]][0];  // First map in the first group
+    if (firstMap) {
+      loadMapJSON(firstMap);  // Load the first map
+    }
+  });
+  startFirstMapButton.classList.add('paste-start-button');
+
+
+  // Create a container for type 2 children
+  const type2ChildrenContainer = document.createElement('div');
+  type2ChildrenContainer.id = 'type2-children-container';
+  type2ChildrenContainer.classList.add('type2-children-container');
+
+  // Append dropdowns and button to the container
+  type2ChildrenContainer.appendChild(mapGroupDropdown);
+  type2ChildrenContainer.appendChild(startFirstMapButton);
+
+  type2ChildrenContainer.style.display = 'none';
+
+  container.appendChild(type2ChildrenContainer);
 }
 
 function createMapAndTimerUI(container) {

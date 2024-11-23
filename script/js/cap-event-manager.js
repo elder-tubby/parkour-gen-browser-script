@@ -1,10 +1,13 @@
 // The following code's taken from BonkLIB, courtesy of FeiFei
 
 window.bonkAPI = {};
+
 bonkAPI.addEventListener = function (event, method, scope, context) {
     bonkAPI.events.addEventListener(event, method, scope, context);
 };
+
 bonkAPI.EventHandler;
+
 (bonkAPI.EventHandler = function () {
     this.hasEvent = [];
 }).prototype = {
@@ -141,7 +144,7 @@ bonkAPI.injector = function (src) {
 if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
 window.bonkCodeInjectors.push((bonkCode) => {
     try {
-        console.log("Code injected for Garkour Generator.")
+        console.log("Code injected for Parkour Generator.")
         return bonkAPI.injector(bonkCode);
     } catch (error) {
         alert('Code injection for parkour generator failed');

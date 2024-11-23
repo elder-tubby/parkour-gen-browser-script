@@ -102,16 +102,18 @@ function showNotification(message, duration = 3000) {
 
 function toggleTypeDropdownVisibility(selectedType) {
     // Hide all dropdown UI elements
-    const mapGroupDropdownContainer = document.getElementById('mapGroupDropdownContainer');
-    const mapsListDropdownContainer = document.getElementById('mapsListDropdownContainer');
 
     const type1ChildrenContainer = document.getElementById('type1-children-container');
+    const type2ChildrenContainer = document.getElementById('type2-children-container');
 
     type1ChildrenContainer.style.display = 'none';
+    type2ChildrenContainer.style.display = 'none';
 
     // Show the selected dropdown UI
     if (selectedType === 'Type 1') {
         type1ChildrenContainer.style.display = 'block';
+    } else if (selectedType === 'Type 2') {
+        type2ChildrenContainer.style.display = 'block';
     }
 
     // You can add more conditions for 'type2' and 'type3' if needed
