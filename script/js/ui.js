@@ -230,7 +230,7 @@ function createMapButtonContainer() {
   container.id = 'map-button-container';
   container.classList.add('map-button-container');
 
-  const createMapButton = createStyledButton('Create', () => createAndSetMap(currentMapData));
+  const createMapButton = createStyledButton('Create', () => createAndSetMap());
   createMapButton.classList.add('map-button');
 
   const createAndStartButton = createStyledButton('Create And Start', createAndStartGame);

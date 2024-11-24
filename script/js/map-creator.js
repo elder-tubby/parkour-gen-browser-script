@@ -1,4 +1,4 @@
-function createAndSetMap(mapData) {
+function createAndSetMap() {
     try {
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
@@ -9,7 +9,7 @@ function createAndSetMap(mapData) {
         let inputData;
         try {
             if (typeof mapData === 'string') {
-                inputData = JSON.parse(mapData);
+                inputData = JSON.parse(currentMapData);
             } else {
                 inputData = mapData; // If it's already an object, just use it
             }
@@ -142,9 +142,6 @@ function createAndSetMap(mapData) {
         console.error('An error occurred while creating the map:', e);
         // showNotification("Failed to create the map. Check the console for errors.");
     }
-
-    window.bonkHost.startGame();
-
 }
 
 async function pasteAndStart() {
@@ -170,7 +167,7 @@ async function pasteAndStart() {
 }
 
 function createAndStartGame() {
-    createAndSetMap(currentMapData);
+    createAndSetMap();
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
