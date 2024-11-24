@@ -1,9 +1,12 @@
-
+let mapsStructureData;
+let currentMapData;
 // Fetch map groups from GitHub
 function fetchMapsStructure() {
-    const mapsSturctureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
+    
+  console.log("fetcher");
+    const mapsStructureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
 
-    return fetch(mapsSturctureURL)
+    return fetch(mapsStructureURL)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to load groups JSON');
@@ -11,7 +14,7 @@ function fetchMapsStructure() {
             return response.json();
         })
         .then(data => {
-            mapsStructure = data;  
+            mapsStructureData = data;  
         })
         .catch(error => {
             console.error('Error fetching groups data:', error);
@@ -21,7 +24,7 @@ function fetchMapsStructure() {
 
 // Function to load the map JSON data from GitHub
 function loadMapJSON(mapFileName) {
-    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapFileName}`;
+    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapFileName}?t=` + Date.now();
 
     fetch(mapURL)
         .then(response => {

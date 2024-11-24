@@ -95,10 +95,12 @@ function createTypeDropdown(container) {
 }
 
 function createUiForType1(container) {
-  const firstType = Object.keys(mapsStructure)[0];  // This gets the first key (e.g., "Type 1")
+
+  console.log("uityp1");
+  const firstType = Object.keys(mapsStructureData)[0];  // This gets the first key (e.g., "Type 1")
 
   // Set mapGroups to the groups of the first type
-  const mapGroups = mapsStructure[firstType]  // Create and append the map group dropdown
+  const mapGroups = mapsStructureData[firstType]  // Create and append the map group dropdown
   const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');
   mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
   mapGroupDropdown.style.width = '100%';
@@ -168,10 +170,10 @@ function createUiForType2(container) {
 
 
   // Dynamically get the second type from mapsStructure
-  const secondType = Object.keys(mapsStructure)[1];  // This gets the second type, e.g., "Type 2"
+  const secondType = Object.keys(mapsStructureData)[1];  // This gets the second type, e.g., "Type 2"
 
   // Set mapGroups to the groups of the second type
-  const mapGroups = mapsStructure[secondType];
+  const mapGroups = mapsStructureData[secondType];
 
   // Create and append the map group dropdown
   const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');

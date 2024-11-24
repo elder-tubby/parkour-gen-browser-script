@@ -5,6 +5,5 @@ window.parkourGenerator = {
 };
 
 
-let currentMapData;
 
 createMainUI();
