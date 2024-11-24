@@ -14,6 +14,18 @@
       {
         "mapId": "map3",
         "mapName": "Parkour Map 3"
+      },
+      {
+        "mapId": "map7",
+        "mapName": "Parkour Map 7"
+      },
+      {
+        "mapId": "map8",
+        "mapName": "Parkour Map 8"
+      },
+      {
+        "mapId": "map9",
+        "mapName": "Parkour Map 9"
       }
     ]
   },
@@ -22,6 +34,18 @@
       {
         "mapId": "map4",
         "mapName": "Parkour Map 4"
+      }
+    ],
+    "Group 2": [
+      {
+        "mapId": "map5",
+        "mapName": "Parkour Map 5"
+      }
+    ],
+    "Group 3": [
+      {
+        "mapId": "map6",
+        "mapName": "Parkour Map 6"
       }
     ]
   }
