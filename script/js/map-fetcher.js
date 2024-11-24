@@ -4,7 +4,7 @@ let currentMapData;
 function fetchMapsStructure() {
     
   console.log("fetcher");
-    const mapsStructureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
+    const mapsStructureURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=${Math.random() * 1000000}`;
 
     return fetch(mapsStructureURL)
         .then(response => {
@@ -23,8 +23,8 @@ function fetchMapsStructure() {
   }
 
 // Function to load the map JSON data from GitHub
-function loadMapJSON(mapFileName) {
-    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapFileName}?t=` + Date.now();
+function fetchAndSetCurrentMap(mapId) {
+    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapId}?t=${Math.random() * 1000000}`;
 
     fetch(mapURL)
         .then(response => {

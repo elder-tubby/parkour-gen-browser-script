@@ -124,11 +124,11 @@ function createUiForType1(container) {
     mapsListDropdown.innerHTML = '';
     mapsListDropdown.appendChild(placeholderOptionMap);  // Keep the placeholder
 
-    // Populate maps dropdown
+    // Populate maps list dropdown
     maps.forEach(map => {
       const option = document.createElement('option');
       option.value = map.mapId;  // Use the mapId as the value
-      option.text = map.mapName.replace('.json', ''); // Display name without extension
+      option.text = map.mapName; // Display name without extension
       mapsListDropdown.appendChild(option);
     });
 
@@ -138,14 +138,11 @@ function createUiForType1(container) {
 
   // Event listener to load selected map JSON file
   mapsListDropdown.addEventListener('change', function () {
-    const selectedMap = mapsListDropdown.value;
+    const selectedMapId = mapsListDropdown.value;
     const selectedGroup = mapGroupDropdown.value;
 
-    if (selectedGroup && selectedMap) {
-      const mapFileName = mapGroups[selectedGroup].find(map => map === selectedMap);
-      if (mapFileName) {
-        loadMapJSON(mapFileName);
-      }
+    if (selectedGroup && selectedMapId) {
+      fetchAndSetCurrentMap(selectedMapId);
     }
   });
 
@@ -158,7 +155,6 @@ function createUiForType1(container) {
 
   type1ChildrenContainer.appendChild(mapGroupDropdown);
   type1ChildrenContainer.appendChild(mapsListDropdown);
-  type1ChildrenContainer.appendChild(mapButtonContainer);
   type1ChildrenContainer.appendChild(mapButtonContainer);
 
   type1ChildrenContainer.style.display = 'none';
@@ -191,7 +187,7 @@ function createUiForType2(container) {
     const firstGroup = mapGroups[Object.keys(mapGroups)[0]];  // Get the first group
     const firstMap = firstGroup[0];  // Get the first map object in the first group
     if (firstMap) {
-      loadMapJSON(firstMap.mapName);  // Load the first map
+      fetchAndSetCurrentMap(firstMap.mapName);  // Load the first map
     }
   });
   startFirstMapButton.classList.add('paste-start-button');
