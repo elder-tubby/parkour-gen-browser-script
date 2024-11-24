@@ -1,4 +1,3 @@
-
 function makeElementDraggable(element) {
     let posX = 0,
         posY = 0,

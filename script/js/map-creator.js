@@ -1,4 +1,4 @@
-function createAndSetMap(red) {
+function createAndSetMap(mapData) {
     try {
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
@@ -8,10 +8,10 @@ function createAndSetMap(red) {
         // Parse the JSON input
         let inputData;
         try {
-            if (typeof red === 'string') {
-                inputData = JSON.parse(red);
+            if (typeof mapData === 'string') {
+                inputData = JSON.parse(mapData);
             } else {
-                inputData = red; // If it's already an object, just use it
+                inputData = mapData; // If it's already an object, just use it
             }
         } catch (error) {
             console.error('Error parsing JSON:', error);
@@ -168,6 +168,7 @@ async function pasteAndStart() {
         showNotification('Failed to read clipboard.');
     }
 }
+
 function createAndStartGame() {
     createAndSetMap(currentMapData);
 

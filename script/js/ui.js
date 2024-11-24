@@ -7,7 +7,7 @@ function createMainUI() {
   container.appendChild(contentWrapper); // Append contentWrapper to the container
 
   // Fetch map groups from GitHub
-  fetchMapsStructure(mapsSturctureURL)
+  fetchMapsStructure()
     .then(() => {
 
       createTypeDropdown(contentWrapper);
@@ -28,8 +28,6 @@ function createMainUI() {
   document.body.appendChild(container);
   return container;
 }
-
-
 
 function createMainContainer() {
   const container = document.createElement('div');
@@ -118,6 +116,8 @@ function createUiForType1(container) {
     const selectedGroup = mapGroupDropdown.value;
     const maps = mapGroups[selectedGroup] || [];
 
+    console.log(maps);
+
     // Clear existing maps options and repopulate
     mapsListDropdown.innerHTML = '';
     mapsListDropdown.appendChild(placeholderOptionMap);  // Keep the placeholder
@@ -125,8 +125,8 @@ function createUiForType1(container) {
     // Populate maps dropdown
     maps.forEach(map => {
       const option = document.createElement('option');
-      option.value = map;
-      option.text = map.replace('.json', ''); // Display name without extension
+      option.value = map.mapId;  // Use the mapId as the value
+      option.text = map.mapName.replace('.json', ''); // Display name without extension
       mapsListDropdown.appendChild(option);
     });
 
@@ -166,7 +166,7 @@ function createUiForType1(container) {
 
 function createUiForType2(container) {
 
-  
+
   // Dynamically get the second type from mapsStructure
   const secondType = Object.keys(mapsStructure)[1];  // This gets the second type, e.g., "Type 2"
 
@@ -186,9 +186,10 @@ function createUiForType2(container) {
   });
 
   const startFirstMapButton = createStyledButton('Start First Map', () => {
-    const firstMap = mapGroups[Object.keys(mapGroups)[0]][0];  // First map in the first group
+    const firstGroup = mapGroups[Object.keys(mapGroups)[0]];  // Get the first group
+    const firstMap = firstGroup[0];  // Get the first map object in the first group
     if (firstMap) {
-      loadMapJSON(firstMap);  // Load the first map
+      loadMapJSON(firstMap.mapName);  // Load the first map
     }
   });
   startFirstMapButton.classList.add('paste-start-button');
@@ -288,4 +289,3 @@ function createPasteAndStartButton() {
 }
 
 
-console.log("Loaded ui.js");

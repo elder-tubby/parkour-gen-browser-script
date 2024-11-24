@@ -1,7 +1,7 @@
-const mapsSturctureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
 
 // Fetch map groups from GitHub
-function fetchMapsStructure(mapsSturctureURL) {
+function fetchMapsStructure() {
+    const mapsSturctureURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/groups.json?t=' + Date.now();
 
     return fetch(mapsSturctureURL)
         .then(response => {
