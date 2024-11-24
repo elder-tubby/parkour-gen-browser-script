@@ -8,10 +8,10 @@ function createAndSetMap() {
         // Parse the JSON input
         let inputData;
         try {
-            if (typeof mapData === 'string') {
+            if (typeof currentMapData === 'string') {
                 inputData = JSON.parse(currentMapData);
             } else {
-                inputData = mapData; // If it's already an object, just use it
+                inputData = currentMapData; // If it's already an object, just use it
             }
         } catch (error) {
             console.error('Error parsing JSON:', error);
