@@ -165,33 +165,35 @@ function createUiForType1(container) {
 function createUiForType2(container) {
 
 
-  // Dynamically get the second type from mapsStructure
-  const secondType = Object.keys(mapsStructureData)[1];  // This gets the second type, e.g., "Type 2"
+ // Dynamically get the second type from mapsStructure
+const secondType = Object.keys(mapsStructureData)[1];  // This gets the second type, e.g., "Type 2"
 
-  // Set mapGroups to the groups of the second type
-  const mapGroups = mapsStructureData[secondType];
+// Set mapGroups to the groups of the second type
+const mapGroups = mapsStructureData[secondType];
 
-  // Create and append the map group dropdown
-  const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');
-  mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
-  mapGroupDropdown.style.width = '100%';
+// Create and append the map group dropdown
+const mapGroupDropdown = createDropdown(Object.keys(mapGroups), 'Select Map Group');
+mapGroupDropdown.classList.add('dropdown');  // Apply common dropdown style
+mapGroupDropdown.style.width = '100%';
 
+// Event listener to update the maps dropdown based on selected group
+mapGroupDropdown.addEventListener('change', function () {
+  const selectedGroup = mapGroupDropdown.value;
+  const maps = mapGroups[selectedGroup] || [];
 
-  // Event listener to update the maps dropdown based on selected group
-  mapGroupDropdown.addEventListener('change', function () {
-    const selectedGroup = mapGroupDropdown.value;
-    const maps = mapGroups[selectedGroup] || [];
-  });
+  // Clear existing maps options and repopulate the maps dropdown here (similar to earlier)
+});
 
-  const startFirstMapButton = createStyledButton('Start First Map', () => {
-    const firstGroup = mapGroups[Object.keys(mapGroups)[0]];  // Get the first group
-    const firstMap = firstGroup[0];  // Get the first map object in the first group
-    if (firstMap) {
-      fetchAndSetCurrentMap(firstMap.mapName);  // Load the first map
-    }
-  });
-  startFirstMapButton.classList.add('paste-start-button');
+// Create the start button for the first map
+const startFirstMapButton = createStyledButton('Start First Map', () => {
+  const selectedGroup = mapGroupDropdown.value;  // Get the currently selected group
+  const firstMap = mapGroups[selectedGroup] ? mapGroups[selectedGroup][0] : null;  // Get the first map of the selected group
 
+  if (firstMap) {
+    fetchAndSetCurrentMap(firstMap.mapId);  // Fetch and load the first map using its mapId
+  }
+});
+startFirstMapButton.classList.add('paste-start-button');
 
   // Create a container for type 2 children
   const type2ChildrenContainer = document.createElement('div');
