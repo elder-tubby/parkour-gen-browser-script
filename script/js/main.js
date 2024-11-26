@@ -1,7 +1,7 @@
 ('use strict');
 
 window.parkourGenerator = {
-    keepPositions: false,
+    keepPositions: true,
 };
 
 // Shared state object

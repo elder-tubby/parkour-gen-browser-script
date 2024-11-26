@@ -173,7 +173,7 @@ async function pasteAndStart() {
 
             const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
             if (isLobbyHidden) {
-                window.parkourGenerator.keepPositions = false;
+                window.parkourGenerator.keepPositions = true;
             }
 
             window.bonkHost.startGame();
