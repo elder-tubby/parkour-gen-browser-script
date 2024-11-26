@@ -1,6 +1,5 @@
 let mapsStructureData;
 
-console.log("checking if scirpt loader's version has to be updated too");
 // Fetch map groups from GitHub
 function fetchMapsStructure() {
 
