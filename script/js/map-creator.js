@@ -1,4 +1,6 @@
-function createAndSetMap() {
+function createMap() {
+    const currentMapData = fetchCurrentMapData();
+
     try {
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
@@ -149,7 +151,7 @@ async function pasteAndStart() {
         const text = await navigator.clipboard.readText();
         if (text.trim()) {
             showNotification('Map generated successfully! Starting the map...');
-            createAndSetMap(text);
+            createMap(text);
 
             const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
             if (isLobbyHidden) {
@@ -167,7 +169,7 @@ async function pasteAndStart() {
 }
 
 function createAndStartGame() {
-    createAndSetMap();
+    createMap();
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {

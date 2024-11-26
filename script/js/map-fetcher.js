@@ -1,5 +1,5 @@
 let mapsStructureData;
-let currentMapData;
+
 console.log("checking if scirpt loader's version has to be updated too");
 // Fetch map groups from GitHub
 function fetchMapsStructure() {
@@ -24,8 +24,8 @@ function fetchMapsStructure() {
 }
 
 // Function to load the map JSON data from GitHub
-function fetchAndSetCurrentMap(mapId) {
-    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapId}.json?t=${Math.random() * 1000000}`;
+function fetchCurrentMapData() {
+    const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${selectedState.mapId}.json?t=${Math.random() * 1000000}`;
     console.log("mapURL: ", mapURL);
     fetch(mapURL)
         .then(response => {
@@ -36,11 +36,13 @@ function fetchAndSetCurrentMap(mapId) {
         })
         .then(mapData => {
             console.log('Map data loaded:', mapData);
-            currentMapData = mapData;
+            return mapData;
         })
         .catch(error => {
             console.error('Error loading map:', error);
             alert('Failed to load map data. Please try again later.');  // User-friendlyt error message
         });
+    return null;
+
 }
 

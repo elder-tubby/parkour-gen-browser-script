@@ -138,7 +138,7 @@ function createUiForType2(container) {
     const firstMap = listOfGroups[selectedGroup] ? listOfGroups[selectedGroup][0] : null;  // Get the first map of the selected group
 
     if (firstMap) {
-      fetchAndSetCurrentMap(firstMap.mapId);  // Fetch and load the first map using its mapId
+      mapData = fetchCurrentMapData(firstMap.mapId);  // Fetch and load the first map using its mapId
     }
   });
   startFirstMapButton.classList.add('paste-start-button');
@@ -178,7 +178,7 @@ function createType1ButtonContainer(container) {
   type1ButtonContainer.id = 'type1-button-container';
   type1ButtonContainer.classList.add('type1-button-container');
 
-  const createMapButton = createStyledButton('Create', () => createAndSetMap());
+  const createMapButton = createStyledButton('Create', () => createMap());
   createMapButton.classList.add('map-button');
   createMapButton.id = 'createMapButton';  // Assign an ID
 
