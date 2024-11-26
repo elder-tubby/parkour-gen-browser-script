@@ -20,7 +20,8 @@ function startTimer() {
   timerInterval = setInterval(() => {
     if (timerSeconds > 0) {
       timerSeconds--;
-      if (timerSeconds < 9) {
+      if (timerSeconds == 9 || timerSeconds == 6 || timerSeconds == 3) {
+        {
         const chatMessage = `Next map in ${timerSeconds} seconds.`;
         console.log(chatMessage);
         sendChatMessage(chatMessage);
