@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Parkour Generator
 // @namespace    https://github.com/elder-tubby/parkour-gen-browser-script/blob/main/script/script-loader.js
-// @version      0.1
+// @version      0.2
 // @description  Converts elder-tubby's parkour generator data to bonk.io maps.
 // @author       eldertubby + Salama
 // @match        https://bonkisback.io/gameframe-release.html

@@ -19,8 +19,8 @@ function createMap() {
             console.error('Error parsing JSON:', error);
         }
         // Extract spawn values
-        const spawnX = inputData.spawn.spawnX !== null && inputData.spawn.spawnX !== undefined ? inputData.spawn.spawnX : 99999;
-        const spawnY = inputData.spawn.spawnY !== null && inputData.spawn.spawnY !== undefined ? inputData.spawn.spawnY : 99999;
+        const spawnX = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnX : 99999;
+        const spawnY = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnY : 99999;
 
 
         const mapSize = inputData.mapSize !== undefined ? inputData.mapSize : 9;
