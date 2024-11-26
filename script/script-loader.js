@@ -6,7 +6,7 @@
 // @author       eldertubby + Salama
 // @match        https://bonkisback.io/gameframe-release.html
 // @match        https://bonk.io/gameframe-release.html
-// @grant        none 
+// @grant        none
 // @license      GPL or MIT
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/utils.js       
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/map-creator.js 
