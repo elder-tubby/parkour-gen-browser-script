@@ -27,6 +27,16 @@
         "mapId": "map9",
         "mapName": "Parkour Map 9"
       }
+    ],
+    "Group 3": [
+      {
+        "mapId": "map10",
+        "mapName": "Parkour Map 10"
+      },
+      {
+        "mapId": "map11",
+        "mapName": "Parkour Map 11"
+      }
     ]
   },
   "Type 2": {
