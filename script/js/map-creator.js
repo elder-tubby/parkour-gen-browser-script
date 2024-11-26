@@ -1,12 +1,15 @@
-async function createMap() {
-    try {
-        // Await the fetching of map data
-        const currentMapData = await fetchCurrentMapData();
-        console.log("start of  createamap ");
-        handleMapCreation(currentMapData);  // Pass the fetched data to the map creation function
-    } catch (error) {
-        console.error('Error loading map data:', error);
-    }
+async function createMap(pastedMapData) {
+    if (!pastedMapData) {
+        try {
+            // Await the fetching of map data
+            const currentMapData = await fetchCurrentMapData();
+            console.log("start of  createamap ");
+            handleMapCreation(currentMapData);  // Pass the fetched data to the map creation function
+        } catch (error) {
+            console.error('Error loading map data:', error);
+        }
+    } else
+        handleMapCreation(pastedMapData);
 }
 
 
