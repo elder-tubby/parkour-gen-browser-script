@@ -188,7 +188,9 @@ async function pasteAndStart() {
 
 async function createAndStartMap() {
     console.log("start of  createandstartmap ");
+    console.log("before createMap in createandstartmap");
     await createMap();
+    console.log("after createMap in createandstartmap");
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {

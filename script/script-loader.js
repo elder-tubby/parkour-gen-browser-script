@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Parkour Generator
 // @namespace    https://github.com/elder-tubby/parkour-gen-browser-script/blob/main/script/script-loader.js
-// @version      1.2
+// @version      1.3
 // @description  Converts elder-tubby's parkour generator data to bonk.io maps and creates parkours that change mid-game.
 // @author       eldertubby + Salama
 // @match        https://bonkisback.io/gameframe-release.html
