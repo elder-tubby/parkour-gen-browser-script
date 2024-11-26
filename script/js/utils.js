@@ -96,8 +96,8 @@ function disableMapRelatedButtons(disable) {
 
     // Check if the elements exist in the DOM before attempting to modify them
     // if (!startFirstMapButton || !createMapButton || !createAndStartButton) {
-        // console.error('One or more elements not found in the DOM');
-        // return;  // Exit the function if elements are not found
+    // console.error('One or more elements not found in the DOM');
+    // return;  // Exit the function if elements are not found
     // }
 
     const elements = [
@@ -119,4 +119,8 @@ function disableMapRelatedButtons(disable) {
             element.style.cursor = '';  // Reset the cursor style
         }
     });
+}
+
+function sendChatMessage(message) {
+    this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
