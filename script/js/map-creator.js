@@ -19,6 +19,8 @@ function createMap() {
             console.error('Error parsing JSON:', error);
         }
         // Extract spawn values
+        console.log("inputData: ", inputData);
+
         const spawnX = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnX : 99999;
         const spawnY = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnY : 99999;
 
