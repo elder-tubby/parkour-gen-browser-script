@@ -43,7 +43,7 @@ let injector = str => {
                   ${stateCreationString}.rl=0;
                   ${stateCreationString}.ftu=60;
                   ${stateCreationString}.shk=${BIGVAR}.bonkHost.state.shk;
-                  window.parkourGenerator.keepPositions = false;
+                  window.parkourGenerator.keepPositions = true;
               };
               `;
 
