@@ -158,8 +158,8 @@ function createTimerButtonContainer() {
   const container = document.createElement('div');
   container.classList.add('timer-button-container');
 
-  const incrementButton = createStyledButton('+10 Sec', incrementTimer);
-  const decrementButton = createStyledButton('-10 Sec', decrementTimer);
+  const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer);
+  const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer);
 
   container.appendChild(incrementButton);
   container.appendChild(decrementButton);

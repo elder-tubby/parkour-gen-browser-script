@@ -1,29 +1,36 @@
 let timerInterval = null;
 let timerSeconds = 0;
 let resetTime = 0; // Stores the value of 'x' when timer hits 0
+const timerChangeAmount = 5;
 
 function incrementTimer() {
-  timerSeconds += 10;
+  timerSeconds += timerChangeAmount;
   updateTimerDisplay();
 }
 
 function decrementTimer() {
-  if (timerSeconds >= 10) {
-    timerSeconds -= 10;
+  if (timerSeconds >= timerChangeAmount) {
+    timerSeconds -= timerChangeAmount;
     updateTimerDisplay();
   }
 }
 
 function startTimer() {
+
+  let chatMessage = ``;
   if (timerInterval) return;
   resetTime = timerSeconds;
   timerInterval = setInterval(() => {
     if (timerSeconds > 0) {
       timerSeconds--;
-      if (timerSeconds == 9 || timerSeconds == 6 || timerSeconds == 3) {
-        {
-        const chatMessage = `Next map in ${timerSeconds} seconds.`;
-        console.log(chatMessage);
+      if (timerSeconds == 10) {
+        chatMessage = `Next map in: ${timerSeconds} seconds.`;
+        sendChatMessage(chatMessage);
+      } else if (timerSeconds == 9 || timerSeconds == 6) {
+        chatMessage = `${timerSeconds} seconds`;
+        sendChatMessage(chatMessage);
+      } else if (timerSeconds < 4) {
+        chatMessage = `${timerSeconds} seconds`;
         sendChatMessage(chatMessage);
       }
       updateTimerDisplay();
