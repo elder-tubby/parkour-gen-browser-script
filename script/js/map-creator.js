@@ -199,9 +199,10 @@ async function createAndStartMap() {
     if (isLobbyHidden) {
         window.parkourGenerator.keepPositions = true;
     }
+    window.parkourGenerator.keepPositions = true;
+
     console.log("end of  createandstartmap ");
     window.bonkHost.startGame();
-    console.log(window.bonkHost);
 }
 
 

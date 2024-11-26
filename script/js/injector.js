@@ -55,3 +55,14 @@ let injector = str => {
 };
 
 
+if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
+window.bonkCodeInjectors.push((bonkCode) => {
+    try {
+        console.log("Code injected for Parkour Generator in injector.js.")
+        return injector(bonkCode);
+    } catch (error) {
+        alert('Code injection for parkour generator failed in injector.js.');
+        throw error;
+    }
+});
+

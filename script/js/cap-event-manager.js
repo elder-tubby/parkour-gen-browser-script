@@ -144,10 +144,10 @@ bonkAPI.injector = function (src) {
 if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
 window.bonkCodeInjectors.push((bonkCode) => {
     try {
-        console.log("Code injected for Parkour Generator.")
+        console.log("Code injected for Parkour Generator in injector.js.")
         return bonkAPI.injector(bonkCode);
     } catch (error) {
-        alert('Code injection for parkour generator failed');
+        alert('Code injection for parkour generator failed in injector.js.');
         throw error;
     }
 });
