@@ -153,7 +153,7 @@ function handleMapCreation(currentMapData) {
         }
 
         map.s.nc = true;
-        map.s.re = false;
+        map.s.re = true;
         map.physics.ppm = mapSize;
 
         gs.map = map;
