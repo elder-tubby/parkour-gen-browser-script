@@ -1,5 +1,6 @@
 let timerInterval = null;
 let timerSeconds = 0;
+let resetTime = 0; // Stores the value of 'x' when timer hits 0
 
 function incrementTimer() {
   timerSeconds += 10;
@@ -15,14 +16,18 @@ function decrementTimer() {
 
 function startTimer() {
   if (timerInterval) return;
+  resetTime = timerSeconds;
   timerInterval = setInterval(() => {
     if (timerSeconds > 0) {
       timerSeconds--;
       updateTimerDisplay();
     } else {
-      stopTimer();
-      showNotification('Timer finished!');
+      // stopTimer();
       selectAndStartRandomMap();
+      timerSeconds = resetTime;
+      updateTimerDisplay();
+      showNotification('Timer finished!');
+      
     }
   }, 1000);
 }
@@ -35,6 +40,7 @@ function stopTimer() {
 function resetTimer() {
   stopTimer();
   timerSeconds = 0;
+  resetTime = 0;  // Clear resetTime when resetting
   updateTimerDisplay();
 }
 
