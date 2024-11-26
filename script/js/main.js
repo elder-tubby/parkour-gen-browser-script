@@ -1,8 +1,6 @@
 ('use strict');
 
-window.parkourGenerator = {
-    keepPositions: true,
-};
+
 
 // Shared state object
 const selectedState = {

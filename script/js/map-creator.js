@@ -1,3 +1,7 @@
+window.parkourGenerator = {
+    keepPositions: true,
+};
+
 async function createMap(pastedMapData) {
     if (!pastedMapData) {
         try {
