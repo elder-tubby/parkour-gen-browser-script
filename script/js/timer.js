@@ -1,7 +1,7 @@
 let timerInterval = null;
 let timerSeconds = 0;
 let resetTime = 0; // Stores the value of 'x' when timer hits 0
-const timerChangeAmount = 5;
+const timerChangeAmount = 3;
 
 function incrementTimer() {
   timerSeconds += timerChangeAmount;
@@ -17,20 +17,21 @@ function decrementTimer() {
 
 function startTimer() {
 
-  let chatMessage = ``;
+  let chatMessage = `Timer started. Next map in ${timerSeconds} seconds.`;
+
   if (timerInterval) return;
   resetTime = timerSeconds;
   timerInterval = setInterval(() => {
     if (timerSeconds > 0) {
       timerSeconds--;
       if (timerSeconds == 10) {
-        chatMessage = `Next map in: ${timerSeconds} seconds`;
+        chatMessage = `Next map in ${timerSeconds} seconds`;
         sendChatMessage(chatMessage);
       } else if (timerSeconds == 3 || timerSeconds == 2) {
-        chatMessage = `${timerSeconds} seconds`;
+        chatMessage = `${timerSeconds}`;
         sendChatMessage(chatMessage);
       } else if (timerSeconds == 1) {
-        chatMessage = `${timerSeconds} second`;
+        chatMessage = `${timerSeconds}`;
         sendChatMessage(chatMessage);
       }
       updateTimerDisplay();
