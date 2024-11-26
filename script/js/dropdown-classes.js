@@ -84,9 +84,8 @@ class TypeDropdown extends Dropdown {
         super(Object.keys(mapsStructureData), 'Select Type', container); // Append the TypeDropdown to the container
         this.groupsDropdown = null;
         this.container = container;
-        // selectedState.type = "Type 1";
         this.createGroupDropdown();
-        // this.groupsDropdown.hide();
+        this.groupsDropdown.hide();
     }
 
     handleChange(event) {

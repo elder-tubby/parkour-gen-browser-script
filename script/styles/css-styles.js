@@ -156,7 +156,7 @@ style.innerHTML = `
   padding: 5px;
 }
 
-.map-button-container {
+.type1-button-container {
   display: flex;
   flex-direction: row;
   /* Align buttons horizontally */

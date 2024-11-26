@@ -14,6 +14,7 @@
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/timer.js       
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/cap-event-manager.js
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/injector.js    
+// @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/dropdown-classes.js    
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/ui.js          
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/js/main.js        
 // @require      https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/script/styles/css-styles.js    

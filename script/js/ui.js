@@ -1,3 +1,5 @@
+// testing if script to be updated
+
 function createMainUI() {
   const container = createMainContainer();
   const heading = createMainHeading();
