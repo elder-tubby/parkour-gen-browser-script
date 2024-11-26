@@ -64,30 +64,19 @@ function createNotificationElement() {
     return notification;
 }
 
-// Helper function to create a dropdown element
-function createDropdown(options, placeholderText) {
-    const dropdown = document.createElement('select');
-    dropdown.style.marginBottom = '10px';
-    dropdown.style.width = '150px';  // Adjust width as needed
-    dropdown.style.zIndex = '1020';  // Ensure it appears above other elements
-    dropdown.style.pointerEvents = 'auto';  // Ensure it's clickable
+function toggleButtonVisibility() {
 
-    // Create placeholder option
-    const placeholderOption = document.createElement('option');
-    placeholderOption.disabled = true;
-    placeholderOption.selected = true;
-    placeholderOption.text = placeholderText;
-    dropdown.appendChild(placeholderOption);
+    console.log("selectedType in toggleButtonVisibility: ", selectedState.type);
+    console.log("mapsStructureData[0]: ", Object.keys(mapsStructureData)[0]);
 
-    // Populate with options
-    options.forEach(optionText => {
-        const option = document.createElement('option');
-        option.value = optionText;
-        option.text = optionText;
-        dropdown.appendChild(option);
-    });
+    const type1UiElementsContainer = document.getElementById('type1-button-container');
+    type1UiElementsContainer.style.display = 'none';
 
-    return dropdown;
+
+    if (selectedState.type == Object.keys(mapsStructureData)[0]) {
+
+        type1UiElementsContainer.style.display = 'flex';
+    }
 }
 
 function showNotification(message, duration = 3000) {
@@ -99,21 +88,35 @@ function showNotification(message, duration = 3000) {
     }, duration);
 }
 
-function toggleTypeDropdownVisibility(selectedType) {
-    // Hide all dropdown UI elements
+function disableMapRelatedButtons(disable) {
+    // Fetch the buttons using their unique IDs
+    // const startFirstMapButton = document.getElementById('startFirstMapButton');
+    const createMapButton = document.getElementById('createMapButton');
+    const createAndStartButton = document.getElementById('createAndStartButton');
 
-    const type1ChildrenContainer = document.getElementById('type1-children-container');
-    const type2ChildrenContainer = document.getElementById('type2-children-container');
+    // Check if the elements exist in the DOM before attempting to modify them
+    // if (!startFirstMapButton || !createMapButton || !createAndStartButton) {
+        // console.error('One or more elements not found in the DOM');
+        // return;  // Exit the function if elements are not found
+    // }
 
-    type1ChildrenContainer.style.display = 'none';
-    type2ChildrenContainer.style.display = 'none';
+    const elements = [
+        // startFirstMapButton,
+        createMapButton,
+        createAndStartButton
+    ];
 
-    // Show the selected dropdown UI
-    if (selectedType === 'Type 1') {
-        type1ChildrenContainer.style.display = 'block';
-    } else if (selectedType === 'Type 2') {
-        type2ChildrenContainer.style.display = 'block';
-    }
-
-    // You can add more conditions for 'type2' and 'type3' if needed
+    elements.forEach(element => {
+        if (disable) {
+            // Apply "disabled" styles to simulate the disabled state
+            element.style.pointerEvents = 'none';  // Disable mouse interaction
+            element.style.backgroundColor = 'darkgray';
+            element.style.cursor = 'not-allowed';  // Change the cursor to "not-allowed"
+        } else {
+            // Reset to enable the element
+            element.style.pointerEvents = '';  // Re-enable mouse interaction
+            element.style.backgroundColor = '#80544c';
+            element.style.cursor = '';  // Reset the cursor style
+        }
+    });
 }
