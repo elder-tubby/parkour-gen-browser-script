@@ -39,6 +39,9 @@ function handleMapCreation(currentMapData) {
         const spawnX = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnX : 99999;
         const spawnY = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnY : 99999;
 
+        spawnX = inputData.spawn.spawnX;
+        spawnY = inputData.spawn.spawnY;
+
 
         const mapSize = inputData.mapSize !== undefined ? inputData.mapSize : 9;
 
