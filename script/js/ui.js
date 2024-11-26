@@ -133,7 +133,7 @@ function createType1ButtonContainer(container) {
   createMapButton.classList.add('map-button');
   createMapButton.id = 'createMapButton';  // Assign an ID
 
-  const createAndStartButton = createStyledButton('Create And Start', createAndStartGame);
+  const createAndStartButton = createStyledButton('Create And Start', createAndStartMap);
   createAndStartButton.classList.add('map-button');
   createAndStartButton.id = 'createAndStartButton';  // Assign an ID
 

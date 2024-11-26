@@ -1,11 +1,14 @@
-function createMap() {
-    // Fetch the map data asynchronously and pass it to handleMapCreation
-    fetchCurrentMapData().then((currentMapData) => {
+async function createMap() {
+    try {
+        // Await the fetching of map data
+        const currentMapData = await fetchCurrentMapData();
+        console.log("start of  createamap ");
         handleMapCreation(currentMapData);  // Pass the fetched data to the map creation function
-    }).catch((error) => {
+    } catch (error) {
         console.error('Error loading map data:', error);
-    });
+    }
 }
+
 
 function handleMapCreation(currentMapData) {
     console.log("currentMapData in handlemapcreations: ", currentMapData);
@@ -180,14 +183,15 @@ async function pasteAndStart() {
     }
 }
 
-function createAndStartGame() {
-    createMap();
+async function createAndStartMap() {
+    console.log("start of  createandstartmap ");
+    await createMap();
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
         window.parkourGenerator.keepPositions = true;
     }
-
+    console.log("end of  createandstartmap ");
     window.bonkHost.startGame();
     console.log(window.bonkHost);
 }
@@ -226,7 +230,7 @@ function selectAndStartRandomMap() {
     console.log('Selected random map:', randomMap);
     updateMapDropdown();
     // Call createAndStartMap() to start the new map
-    createAndStartGame();
+    createAndStartMap();
 }
 
 function updateMapDropdown() {
