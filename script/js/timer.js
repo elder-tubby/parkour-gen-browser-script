@@ -24,13 +24,13 @@ function startTimer() {
     if (timerSeconds > 0) {
       timerSeconds--;
       if (timerSeconds == 10) {
-        chatMessage = `Next map in: ${timerSeconds} seconds.`;
+        chatMessage = `Next map in: ${timerSeconds} seconds`;
         sendChatMessage(chatMessage);
-      } else if (timerSeconds == 9 || timerSeconds == 6) {
+      } else if (timerSeconds == 3 || timerSeconds == 2) {
         chatMessage = `${timerSeconds} seconds`;
         sendChatMessage(chatMessage);
-      } else if (timerSeconds < 4) {
-        chatMessage = `${timerSeconds} seconds`;
+      } else if (timerSeconds == 1) {
+        chatMessage = `${timerSeconds} second`;
         sendChatMessage(chatMessage);
       }
       updateTimerDisplay();
