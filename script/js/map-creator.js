@@ -1,5 +1,14 @@
 function createMap() {
-    const currentMapData = fetchCurrentMapData();
+    // Fetch the map data asynchronously and pass it to handleMapCreation
+    fetchCurrentMapData().then((currentMapData) => {
+        handleMapCreation(currentMapData);  // Pass the fetched data to the map creation function
+    }).catch((error) => {
+        console.error('Error loading map data:', error);
+    });
+}
+
+function handleMapCreation(currentMapData) {
+    console.log("currentMapData in handlemapcreations: ", currentMapData);
 
     try {
         const w = parent.frames[0];

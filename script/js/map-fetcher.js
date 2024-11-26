@@ -22,26 +22,23 @@ function fetchMapsStructure() {
         });
 }
 
-// Function to load the map JSON data from GitHub
-function fetchCurrentMapData() {
+// Function to load the map JSON data from GitHub and return it
+async function fetchCurrentMapData() {
     const mapURL = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${selectedState.mapId}.json?t=${Math.random() * 1000000}`;
     console.log("mapURL: ", mapURL);
-    fetch(mapURL)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load map JSON');
-            }
-            return response.json();
-        })
-        .then(mapData => {
-            console.log('Map data loaded:', mapData);
-            return mapData;
-        })
-        .catch(error => {
-            console.error('Error loading map:', error);
-            alert('Failed to load map data. Please try again later.');  // User-friendlyt error message
-        });
-    return null;
 
+    try {
+        const response = await fetch(mapURL);
+        if (!response.ok) {
+            throw new Error('Failed to load map JSON');
+        }
+        const mapData = await response.json();  // Wait for the JSON to be parsed
+        console.log('Map data loaded:', mapData);
+        return mapData;  // Return the map data
+    } catch (error) {
+        console.error('Error loading map:', error);
+        alert('Failed to load map data. Please try again later.');  // User-friendly error message
+        return null;  // Return null if an error occurs
+    }
 }
 
