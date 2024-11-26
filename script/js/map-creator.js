@@ -192,3 +192,48 @@ function createAndStartGame() {
     console.log(window.bonkHost);
 }
 
+
+function selectAndStartRandomMap() {
+    // Ensure the type and group are selected
+    if (!selectedState.type || !selectedState.group) {
+        console.error('No type or group selected!');
+        return;
+    }
+
+    // Fetch the list of maps for the selected group
+    const listOfMaps = mapsStructureData[selectedState.type][selectedState.group];
+    if (!listOfMaps) {
+        console.error('No maps found for the selected group:', selectedState.group);
+        return;
+    }
+
+    // Filter out the current mapId to avoid selecting it again
+    const availableMaps = listOfMaps.filter(map => map.mapId !== selectedState.mapId);
+
+    // If no available maps to select, log an error and exit
+    if (availableMaps.length === 0) {
+        console.error('No other maps available to select.');
+        return;
+    }
+
+    // Choose a random map from the available maps
+    const randomMap = availableMaps[Math.floor(Math.random() * availableMaps.length)];
+
+    // Update selectedState.mapId with the new random map's mapId
+    selectedState.mapId = randomMap.mapId;
+
+    // Optionally, log the selected map details
+    console.log('Selected random map:', randomMap);
+    updateMapDropdown();
+    // Call createAndStartMap() to start the new map
+    createAndStartGame();
+}
+
+function updateMapDropdown() {
+    // Assuming the MapDropdown is the third dropdown and has a class 'map-dropdown'
+    const mapDropdown = document.querySelector('.map-dropdown');
+    if (mapDropdown) {
+        mapDropdown.value = selectedState.mapId;  // Set the selected map to the new mapId
+    }
+}
+

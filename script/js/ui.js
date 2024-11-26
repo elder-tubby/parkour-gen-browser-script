@@ -8,62 +8,11 @@ function createMainUI() {
   container.appendChild(heading); // Append heading to the container
   container.appendChild(contentWrapper); // Append contentWrapper to the container
 
-mapsStructureData = {
-  "Type 1": {
-    "Group 1": [
-      {
-        "mapId": "map1",
-        "mapName": "Parkour Map 1"
-      },
-      {
-        "mapId": "map2",
-        "mapName": "Parkour Map 2"
-      }
-    ],
-    "Group 2": [
-      {
-        "mapId": "map3",
-        "mapName": "Parkour Map 3"
-      },
-      {
-        "mapId": "map7",
-        "mapName": "Parkour Map 7"
-      },
-      {
-        "mapId": "map8",
-        "mapName": "Parkour Map 8"
-      },
-      {
-        "mapId": "map9",
-        "mapName": "Parkour Map 9"
-      }
-    ]
-  },
-  "Type 2": {
-    "Group 1": [
-      {
-        "mapId": "map4",
-        "mapName": "Parkour Map 4"
-      }
-    ],
-    "Group 2": [
-      {
-        "mapId": "map5",
-        "mapName": "Parkour Map 5"
-      }
-    ],
-    "Group 3": [
-      {
-        "mapId": "map6",
-        "mapName": "Parkour Map 6"
-      }
-    ]
-  }
-};
+
 
   // Fetch map groups from GitHub
-  // fetchMapsStructure()
-  //   .then(() => {
+  fetchMapsStructure()
+    .then(() => {
 
 
 
@@ -76,11 +25,11 @@ mapsStructureData = {
 
       createToggleButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
 
-    // })
-    // .catch(error => {
-      // console.error('Error loading map structure file:', error);
-      // alert('Failed to load map structure. Please try again later.');
-    // });
+    })
+    .catch(error => {
+      console.error('Error loading map structure file:', error);
+      alert('Failed to load map structure. Please try again later.');
+    });
   document.body.appendChild(container);
   return container;
 }

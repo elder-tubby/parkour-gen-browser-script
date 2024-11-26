@@ -201,6 +201,7 @@ class MapDropdown extends Dropdown {
         this.container = container;
         this.maps = maps;
         this.container.appendChild(this.getElement());
+        this.getElement().classList.add('map-dropdown');  // Add a unique class for targeting
     }
 
     handleChange(event) {
