@@ -8,16 +8,22 @@ async function createMap(pastedMapData) {
             // Await the fetching of map data
             const currentMapData = await fetchCurrentMapData();
             console.log("start of  createamap ");
-            handleMapCreation(currentMapData);  // Pass the fetched data to the map creation function
+            const randomMapAndAuthor = await fetchRandomMapAndAuthorNames();
+            handleMapCreation(currentMapData, randomMapAndAuthor);  // Pass the fetched data to the map creation function
         } catch (error) {
             console.error('Error loading map data:', error);
         }
-    } else
-        handleMapCreation(pastedMapData);
+    } else {
+        const randomMapAndAuthor = await fetchRandomMapAndAuthorNames();
+        handleMapCreation(pastedMapData, randomMapAndAuthor);
+    }
 }
 
 
-function handleMapCreation(currentMapData) {
+function handleMapCreation(currentMapData, randomMapAndAuthor) {
+    console.log("currentMapData in handleMapCreation: ", currentMapData);
+    console.log("Random map and author pair: ", randomMapAndAuthor);
+
     console.log("currentMapData in handlemapcreations: ", currentMapData);
 
     try {
@@ -49,8 +55,12 @@ function handleMapCreation(currentMapData) {
             w.bonkHost.players[
                 w.bonkHost.toolFunctions.networkEngine.getLSID()
             ].userName;
-        map.m.a = "sdsdasdas";
         map.m.n = 'Generated Parkour';
+
+        if (randomMapAndAuthor) {
+            map.m.n = randomMapAndAuthor.key;  // Assign the random key to map.m.n
+            map.m.a = randomMapAndAuthor.value; // Assign the random value to map.m.a
+        }
 
         // Set up shapes from the input data
         map.physics.shapes = inputData.lines.map(r => {

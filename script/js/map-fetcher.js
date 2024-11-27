@@ -42,3 +42,39 @@ async function fetchCurrentMapData() {
     }
 }
 
+// Function to fetch the JSON from a raw GitHub URL and return a random key-value pair
+async function fetchRandomMapAndAuthorNames() {
+    try {
+        // GitHub raw file URL (replace this URL with the actual URL of your raw GitHub JSON file)
+        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/mapAndAuthorNames.json?t=${Math.random() * 1000000}`;
+
+        // Fetching the JSON file from GitHub
+        const response = await fetch(url);
+        const mapAndAuthorNames = await response.json();
+
+        // Getting a random key from the map
+        const keys = Object.keys(mapAndAuthorNames);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+        // Returning the key-value pair
+        return {
+            key: randomKey,
+            value: mapAndAuthorNames[randomKey]
+        };
+    } catch (error) {
+        console.error('Error fetching the JSON file:', error);
+    }
+}
+
+// Fetch the random key-value pair and assign the values to map.m.n and map.m.a
+fetchRandomMapAndAuthorNames().then(randomPair => {
+    if (randomPair) {
+        // Assigning the key to map.m.n and value to map.m.a
+        const map = { m: {} };
+        map.m.n = randomPair.key; // Assigning the random key to map.m.n
+        map.m.a = randomPair.value; // Assigning the value to map.m.a
+
+        console.log('Map:', map);
+    }
+});
+

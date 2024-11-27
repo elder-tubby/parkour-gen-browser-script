@@ -8,5 +8,5 @@ const selectedState = {
     group: null,
     mapId: null
   };
-
+fetchRandomMapAndAuthorNames();
 createMainUI();
