@@ -49,6 +49,7 @@ function handleMapCreation(currentMapData) {
             w.bonkHost.players[
                 w.bonkHost.toolFunctions.networkEngine.getLSID()
             ].userName;
+        map.m.a = "sdsdasdas";
         map.m.n = 'Generated Parkour';
 
         // Set up shapes from the input data
