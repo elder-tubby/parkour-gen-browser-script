@@ -40,15 +40,28 @@ style.innerHTML = `
 /* Control Button Container */
 .control-button-container {
   display: flex;
-  flex-direction: row;
-  /* Set the direction to row */
-  margin-bottom: 5px;
-  /* Optional margin for spacing */
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
 }
 
-/* Paste and Start Button */
-.paste-start-button {
-  width: 130px;
+.control-button-container > button {
+  flex: 0 1 auto; /* Adjust button size */
+  margin-bottom: 5px; /* Space between rows */
+}
+
+.control-button-container > button:nth-child(1),
+.control-button-container > button:nth-child(2) {
+  width: 47px;
+  margin-right: 27px;
+  margin-left: 6px; /* Adjust the spacing as needed */
+}
+
+.control-button-container > button:nth-child(3) {
+  width: 47px;
+}
+
+.control-button-container > button:nth-child(4) {
+  margin-right: 20px; /* Adjust the spacing as needed */
+  margin-left: 20px;
 }
 
 /* Main container styles */
@@ -228,7 +241,7 @@ style.innerHTML = `
 /* Paste and Start button styles */
 .paste-start-button {
   display: flex;
-  width: 142px;
+  width: 130px;
   /* Center the content vertically */
   margin: 0 auto;
   /* Center the button within its parent container */
@@ -267,7 +280,6 @@ style.innerHTML = `
   font-size: 14px;
   background-color: #fff;
   transition: all 0.3s ease;
-  
 }
 
 #mapGroupDropdownContainer,
@@ -277,7 +289,26 @@ style.innerHTML = `
   /* Make sure containers are full width */
   /* padding: 5px; */
 }
-    
+
+.checkbox-container {
+  display: flex;
+  align-items: center; /* Aligns checkbox and label vertically centered */
+  margin-top: 30px;
+  margin-bottom: 10px;
+  /* position: relative; Allows for positioning within the container */
+}
+
+.checkbox {
+  position: absolute;
+  right: 10px;
+}
+
+.checkbox-label {
+  position: absolute;
+  left: 10px;
+  font-family: 'futurept_b1'; /* Make sure 'futurept_b1' is available or fallback to sans-serif */
+}
+
 `;
 
 // Append the <style> element to the <head> of the document
