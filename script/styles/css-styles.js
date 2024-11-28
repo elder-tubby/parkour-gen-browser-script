@@ -304,7 +304,7 @@ style.innerHTML = `
 }
 
 .set-loop-duration-button {
-  font-size: 12px;
+  font-size: 13px;
 }
 `;
 
