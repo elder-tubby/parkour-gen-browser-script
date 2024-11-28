@@ -202,8 +202,9 @@ async function pasteAndStart() {
             }
 
             window.bonkHost.startGame();
-            console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
             window.parkourGenerator.keepPositions = tempKeepPositionsValue;
+            console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
+
         } else {
             showNotification('Clipboard is empty. Copy map data first.');
         }
@@ -218,7 +219,7 @@ async function createAndStartMap() {
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
-        // window.parkourGenerator.keepPositions = true;
+        window.parkourGenerator.keepPositions = true;
     }
 
     window.bonkHost.startGame();
