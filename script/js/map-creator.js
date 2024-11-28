@@ -181,7 +181,25 @@ function handleMapCreation(currentMapData, randomMapAndAuthor) {
 async function pasteAndStart() {
     try {
         const text = await navigator.clipboard.readText();
-        if (text.trim()) {
+
+        // Trim any leading or trailing whitespace from the text
+        text = text.trim();
+
+        // Check if text is empty after trimming
+        if (!text) {
+            showNotification('Clipboard is empty. Copy map data first.');
+            return;
+        }
+        // Attempt to parse the text as JSON
+        let parsedData;
+        try {
+            parsedData = JSON.parse(text);
+        } catch (jsonError) {
+            throw new Error('Invalid JSON format.');
+        }
+
+        // Check if parsedData has the 'spawn' and 'lines' properties
+        if (parsedData && parsedData.spawn && Array.isArray(parsedData.lines)) {
             showNotification('Map generated successfully! Starting the map...');
             createMap(text);
 

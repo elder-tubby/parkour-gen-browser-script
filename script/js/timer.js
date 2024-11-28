@@ -27,20 +27,18 @@ function startTimer() {
 
   if (timerInterval) return;
 
-
-
   timerInterval = setInterval(() => {
     if (currentTimeInSeconds > 0) {
       currentTimeInSeconds--;
       if (currentTimeInSeconds == 10) {
         chatMessage = `Next map in ${currentTimeInSeconds} seconds`;
-        // sendChatMessage(chatMessage);
+        sendChatMessage(chatMessage);
       } else if (currentTimeInSeconds == 3 || currentTimeInSeconds == 2) {
         chatMessage = `${currentTimeInSeconds}`;
-        // sendChatMessage(chatMessage);
+        sendChatMessage(chatMessage);
       } else if (currentTimeInSeconds == 1) {
         chatMessage = `${currentTimeInSeconds}`;
-        // sendChatMessage(chatMessage);
+        sendChatMessage(chatMessage);
       }
       updateTimerDisplay();
     } else {
@@ -52,7 +50,7 @@ function startTimer() {
         stopTimer();
         return;
       }
-      
+
       currentTimeInSeconds = loopDuration;
       updateTimerDisplay();
     }

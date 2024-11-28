@@ -66,15 +66,15 @@ async function fetchRandomMapAndAuthorNames() {
     }
 }
 
-// Fetch the random key-value pair and assign the values to map.m.n and map.m.a
-fetchRandomMapAndAuthorNames().then(randomPair => {
-    if (randomPair) {
-        // Assigning the key to map.m.n and value to map.m.a
-        const map = { m: {} };
-        map.m.n = randomPair.key; // Assigning the random key to map.m.n
-        map.m.a = randomPair.value; // Assigning the value to map.m.a
+// // Fetch the random key-value pair and assign the values to map.m.n and map.m.a
+// fetchRandomMapAndAuthorNames().then(randomPair => {
+//     if (randomPair) {
+//         // Assigning the key to map.m.n and value to map.m.a
+//         const map = { m: {} };
+//         map.m.n = randomPair.key; // Assigning the random key to map.m.n
+//         map.m.a = randomPair.value; // Assigning the value to map.m.a
 
-        console.log('Map:', map);
-    }
-});
+//         console.log('Map:', map);
+//     }
+// });
 

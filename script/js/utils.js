@@ -47,6 +47,7 @@ function makeElementDraggable(element) {
         return e.clientX > rect.right - offset && e.clientY > rect.bottom - offset;
     }
 }
+
 function createCheckbox(onClick, labelText, checkBoxValue) {
     // Create a checkbox element
     const checkbox = document.createElement('input');
@@ -75,8 +76,6 @@ function createCheckbox(onClick, labelText, checkBoxValue) {
 
     return container;
 }
-
-
 
 function createStyledButton(text, onClick, canPressAndHold, id) {
     const button = document.createElement('button');
@@ -175,7 +174,8 @@ function disableMapRelatedButtons(disable) {
 }
 
 function sendChatMessage(message) {
-    if (!canSendChatMessage) return;
+    // if (!canSendChatMessage) return;
+    console.log("chat message sent");
     this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
 
