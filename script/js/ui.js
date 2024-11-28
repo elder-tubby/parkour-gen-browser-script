@@ -172,7 +172,7 @@ function createTimerOptionsContainer() {
 
   const resetButton = createStyledButton('Reset', resetTimer);
 
-  const setLoopDurationButton = createStyledButton('Set the current time as loop duration', setLoopDuration);
+  const setLoopDurationButton = createStyledButton('Set current time as loop duration', setLoopDuration);
 
   innerContainer.appendChild(startButton);
   innerContainer.appendChild(stopButton);
