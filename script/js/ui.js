@@ -1,35 +1,30 @@
-// testing if script to be updated
-
 function createMainUI() {
   const container = createMainContainer();
   const heading = createMainHeading();
   const contentWrapper = createContentWrapper();
 
-  container.appendChild(heading); // Append heading to the container
-  container.appendChild(contentWrapper); // Append contentWrapper to the container
-
-
-
   // Fetch map groups from GitHub
   fetchMapsStructure()
     .then(() => {
-
-
-
       const typeDropdown = new TypeDropdown(contentWrapper);
 
       createType1ButtonContainer(contentWrapper);
-      // createUiForType2(contentWrapper); // Add map group dropdowns
+      // createUIForType2(contentWrapper); // Add map group dropdowns
 
-      createMapAndTimerUI(contentWrapper); // Add your other UI elements here
+      createTimerUI(contentWrapper);
+      createOtherUI(contentWrapper);
 
-      createToggleUiVisibilityButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
+      createToggleUIVisibilityButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
 
     })
     .catch(error => {
       console.error('Error loading map structure file:', error);
     });
+
+  container.appendChild(heading); // Append heading to the container
+  container.appendChild(contentWrapper); // Append contentWrapper to the container
   document.body.appendChild(container);
+
   return container;
 }
 
@@ -54,7 +49,7 @@ function createContentWrapper() {
   return contentWrapper;
 }
 
-function createToggleUiVisibilityButton(container, contentWrapper) {
+function createToggleUIVisibilityButton(container, contentWrapper) {
   const toggleButton = document.createElement('button');
   toggleButton.innerHTML = '-'; // Start with a "-" icon
   toggleButton.classList.add('toggle-button');
@@ -80,7 +75,7 @@ function createToggleUiVisibilityButton(container, contentWrapper) {
   container.appendChild(toggleButton); // Append toggle button to the container
 }
 
-function createUiForType2(container) {
+function createUIForType2(container) {
 
   // Create the start button for the first map
   const startFirstMapButton = createStyledButton('Start First Map', () => {
@@ -97,37 +92,32 @@ function createUiForType2(container) {
   container.appendChild(startFirstMapButton);
 }
 
-function createMapAndTimerUI(container) {
-  container.classList.add('map-timer-container');
-
-  // Create UI elements
-  const timerDisplay = createTimerDisplay();
-  const timerButtonContainer = createTimerButtonContainer();
-  const controlButtonContainer = createControlButtonContainer();
+function createOtherUI(container) {
   const pasteAndStartButton = createPasteAndStartButton();
   const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts", true);
   const keepPostionsContainer = createCheckbox(toggleKeepPostion, "Keep positions", true);
-  
-  // Append UI elements to container
-  container.appendChild(timerDisplay);
-  container.appendChild(timerButtonContainer);
-  container.appendChild(controlButtonContainer);
+
   container.appendChild(pasteAndStartButton);
   container.appendChild(chatMessageToggleContainer);
   container.appendChild(keepPostionsContainer);
 }
 
+function createTimerUI(container) {
+  container.classList.add('map-timer-container');
+
+  // Create UI elements
+  const timerDisplay = createTimerDisplay();
+  const timerButtonContainer = createTimerChangeContainer();
+  const timerOptionsContainer = createTimerOptionsContainer();
+
+  // Append UI elements to container
+  container.appendChild(timerDisplay);
+  container.appendChild(timerButtonContainer);
+  container.appendChild(timerOptionsContainer);
+
+}
+
 function createType1ButtonContainer(container) {
-  // Event listener to load selected map JSON file
-  // mapsListDropdown.addEventListener('change', function () {
-  //   selectedMapId = mapsListDropdown.value;
-  //   const selectedGroup = mapGroupDropdown.value;
-
-  //   if (selectedGroup && selectedMapId) {
-  //     fetchAndSetCurrentMap(selectedMapId);
-  //   }
-  // });
-
   const type1ButtonContainer = document.createElement('div');
   type1ButtonContainer.id = 'type1-button-container';
   type1ButtonContainer.classList.add('type1-button-container');
@@ -157,12 +147,14 @@ function createTimerDisplay() {
   return timerDisplay;
 }
 
-function createTimerButtonContainer() {
+function createTimerChangeContainer() {
   const container = document.createElement('div');
-  container.classList.add('timer-button-container');
+  container.classList.add('timer-change-container');
 
   const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer, true);
   const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer, true);
+  incrementButton.style.width = '70px';
+  decrementButton.style.width = '70px';
 
   container.appendChild(incrementButton);
   container.appendChild(decrementButton);
@@ -170,24 +162,28 @@ function createTimerButtonContainer() {
   return container;
 }
 
-function createControlButtonContainer() {
-  const container = document.createElement('div');
-  container.classList.add('control-button-container');
+function createTimerOptionsContainer() {
+  const innerContainer = document.createElement('div');
+  innerContainer.classList.add('timer-start-stop-container');
 
   const startButton = createStyledButton('Start', startTimer, false, 'startButton');
-  const stopButton = createStyledButton('Stop', stopTimer, false, 'stopButton');
+  const stopButton = createStyledButton('Pause', stopTimer, false, 'stopButton');
   stopButton.style.display = 'none'; // Initially hide the stop button
 
   const resetButton = createStyledButton('Reset', resetTimer);
 
   const setLoopDurationButton = createStyledButton('Set the current time as loop duration', setLoopDuration);
 
-  container.appendChild(startButton);
-  container.appendChild(stopButton);
-  container.appendChild(resetButton);
-  container.appendChild(setLoopDurationButton);
+  innerContainer.appendChild(startButton);
+  innerContainer.appendChild(stopButton);
+  innerContainer.appendChild(resetButton);
 
-  return container;
+  const outerContainer = document.createElement('div');
+
+  outerContainer.appendChild(innerContainer);
+  outerContainer.appendChild(setLoopDurationButton);
+
+  return outerContainer;
 }
 
 function createPasteAndStartButton() {
@@ -196,5 +192,3 @@ function createPasteAndStartButton() {
 
   return button;
 }
-
-

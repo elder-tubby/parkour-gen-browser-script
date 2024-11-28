@@ -27,7 +27,7 @@ style.innerHTML = `
 }
 
 /* Timer Button Container */
-.timer-button-container {
+.timer-change-container {
   display: flex;
   flex-direction: row;
   /* Set the direction to row */
@@ -38,28 +38,28 @@ style.innerHTML = `
 }
 
 /* Control Button Container */
-.control-button-container {
+.timer-start-stop-container {
   display: flex;
   flex-wrap: wrap; /* Allow items to wrap to the next line */
 }
 
-.control-button-container > button {
+.timer-start-stop-container > button {
   flex: 0 1 auto; /* Adjust button size */
   margin-bottom: 5px; /* Space between rows */
 }
 
-.control-button-container > button:nth-child(1),
-.control-button-container > button:nth-child(2) {
+.timer-start-stop-container > button:nth-child(1),
+.timer-start-stop-container > button:nth-child(2) {
   width: 47px;
   margin-right: 27px;
   margin-left: 6px; /* Adjust the spacing as needed */
 }
 
-.control-button-container > button:nth-child(3) {
+.timer-start-stop-container > button:nth-child(3) {
   width: 47px;
 }
 
-.control-button-container > button:nth-child(4) {
+.timer-start-stop-container > button:nth-child(4) {
   margin-right: 20px; /* Adjust the spacing as needed */
   margin-left: 20px;
 }
@@ -195,7 +195,7 @@ style.innerHTML = `
 }
 
 /* Timer button container styles */
-.timer-button-container {
+.timer-change-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -214,7 +214,7 @@ style.innerHTML = `
 }
 
 /* Control button container styles */
-.control-button-container {
+.timer-start-stop-container {
   display: flex;
   flex-direction: row;
   justify-content: center;

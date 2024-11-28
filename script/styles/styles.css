@@ -12,7 +12,7 @@
 /* Create Map Button */
 .create-map-button {
   width: 130px;
-  
+
 }
 
 /* Timer Display */
@@ -24,7 +24,7 @@
 }
 
 /* Timer Button Container */
-.timer-button-container {
+.timer-change-container {
   display: flex;
   flex-direction: row;
   /* Set the direction to row */
@@ -35,30 +35,31 @@
 }
 
 /* Control Button Container */
-.control-button-container {
-  display: flex;
-  flex-wrap: wrap; /* Allow items to wrap to the next line */
+.timer-start-stop-container {
+  /* display: flex;
+  flex-wrap: wrap; Allow items to wrap to the next line */
 }
 
-.control-button-container > button {
-  flex: 0 1 auto; /* Adjust button size */
-  margin-bottom: 5px; /* Space between rows */
+.timer-start-stop-container>button {
+  /* flex: 0 1 auto; Adjust button size */
+  /* margin-bottom: 5px; Space between rows */
 }
 
-.control-button-container > button:nth-child(1),
-.control-button-container > button:nth-child(2) {
-  width: 47px;
-  margin-right: 27px;
-  margin-left: 6px; /* Adjust the spacing as needed */
+.timer-start-stop-container>button:nth-child(1),
+.timer-start-stop-container>button:nth-child(2) {
+  width: 70px;
+  /* margin-right: 2px; */
+  /* margin-left: 2px; Adjust the spacing as needed */
 }
 
-.control-button-container > button:nth-child(3) {
-  width: 47px;
+.timer-start-stop-container>button:nth-child(3) {
+  width: 70px;
 }
 
-.control-button-container > button:nth-child(4) {
-  margin-right: 20px; /* Adjust the spacing as needed */
-  margin-left: 20px;
+.timer-start-stop-container>button:nth-child(4) {
+  /* margin-right: 20px; /* Adjust the spacing as needed */
+  /* margin-left: 20px; */
+  */
 }
 
 /* Main container styles */
@@ -188,11 +189,10 @@
   /* border-radius: 4px; */
   /* Rounded corners */
   /* background-color: #f0f0f0b4; */
-  /* Light background to visually separate */
 }
 
 /* Timer button container styles */
-.timer-button-container {
+.timer-change-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -202,7 +202,7 @@
   width: 100%;
   /* Ensure the container uses full width */
   margin-bottom: 5px;
-  gap: 25px;
+  gap: 10px;
   /* border: 1px solid; */
   border-radius: 4px;
   /* Rounded corners */
@@ -211,7 +211,7 @@
 }
 
 /* Control button container styles */
-.control-button-container {
+.timer-start-stop-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -221,7 +221,8 @@
   width: 100%;
   /* Ensure the container uses full width */
   margin-bottom: 5px;
-  gap: 4px;
+  /* Align buttons horizontally */
+  gap: 10px;
   /* border: 1px solid; */
   border-radius: 4px;
   /* Rounded corners */
@@ -232,13 +233,13 @@
 
 /* Map button styles */
 .map-button {
-  width: 200px;
+  width: 70px;
 }
 
 /* Paste and Start button styles */
 .paste-start-button {
   display: flex;
-  width: 130px;
+  width: 160px;
   /* Center the content vertically */
   margin: 0 auto;
   /* Center the button within its parent container */
@@ -248,8 +249,9 @@
 /* Style for the dropdown container */
 .type-dropdown-container {
   margin-bottom: 20px;
-  
+
 }
+
 .type-dropdown {
   padding: 5px;
   font-family: 'futurept_b1';
@@ -260,7 +262,7 @@
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  
+
 }
 
 
@@ -282,14 +284,15 @@
 #mapGroupDropdownContainer,
 #mapsListDropdownContainer {
   width: 100%;
-  
+
   /* Make sure containers are full width */
   /* padding: 5px; */
 }
 
 .checkbox-container {
   display: flex;
-  align-items: center; /* Aligns checkbox and label vertically centered */
+  align-items: center;
+  /* Aligns checkbox and label vertically centered */
   margin-top: 30px;
   margin-bottom: 10px;
   /* position: relative; Allows for positioning within the container */
@@ -303,5 +306,6 @@
 .checkbox-label {
   position: absolute;
   left: 10px;
-  font-family: 'futurept_b1'; /* Make sure 'futurept_b1' is available or fallback to sans-serif */
+  font-family: 'futurept_b1';
+  /* Make sure 'futurept_b1' is available or fallback to sans-serif */
 }

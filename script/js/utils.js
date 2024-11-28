@@ -117,13 +117,13 @@ function createNotificationElement() {
 }
 
 function toggleButtonVisibility() {
-    const type1UiElementsContainer = document.getElementById('type1-button-container');
-    type1UiElementsContainer.style.display = 'none';
+    const type1UIElementsContainer = document.getElementById('type1-button-container');
+    type1UIElementsContainer.style.display = 'none';
 
 
     if (selectedState.type == Object.keys(mapsStructureData)[0]) {
 
-        type1UiElementsContainer.style.display = 'flex';
+        type1UIElementsContainer.style.display = 'flex';
     }
 }
 
