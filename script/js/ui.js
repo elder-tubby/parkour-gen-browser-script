@@ -17,13 +17,13 @@ function createMainUI() {
 
 
       const typeDropdown = new TypeDropdown(contentWrapper);
-      
+
       createType1ButtonContainer(contentWrapper);
       // createUiForType2(contentWrapper); // Add map group dropdowns
 
       createMapAndTimerUI(contentWrapper); // Add your other UI elements here
 
-      createToggleButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
+      createToggleUiVisibilityButton(container, contentWrapper); // Add sthe stoggle button for collapsing/expanding
 
     })
     .catch(error => {
@@ -55,7 +55,7 @@ function createContentWrapper() {
   return contentWrapper;
 }
 
-function createToggleButton(container, contentWrapper) {
+function createToggleUiVisibilityButton(container, contentWrapper) {
   const toggleButton = document.createElement('button');
   toggleButton.innerHTML = '-'; // Start with a "-" icon
   toggleButton.classList.add('toggle-button');
@@ -106,12 +106,15 @@ function createMapAndTimerUI(container) {
   const timerButtonContainer = createTimerButtonContainer();
   const controlButtonContainer = createControlButtonContainer();
   const pasteAndStartButton = createPasteAndStartButton();
-
+  const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts", true);
+  
   // Append UI elements to container
   container.appendChild(timerDisplay);
   container.appendChild(timerButtonContainer);
   container.appendChild(controlButtonContainer);
   container.appendChild(pasteAndStartButton);
+  container.appendChild(chatMessageToggleContainer);
+
 }
 
 function createType1ButtonContainer(container) {
@@ -158,8 +161,8 @@ function createTimerButtonContainer() {
   const container = document.createElement('div');
   container.classList.add('timer-button-container');
 
-  const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer);
-  const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer);
+  const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer, true);
+  const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer, true);
 
   container.appendChild(incrementButton);
   container.appendChild(decrementButton);
@@ -171,13 +174,18 @@ function createControlButtonContainer() {
   const container = document.createElement('div');
   container.classList.add('control-button-container');
 
-  const startButton = createStyledButton('Start', startTimer);
-  const stopButton = createStyledButton('Stop', stopTimer);
+  const startButton = createStyledButton('Start', startTimer, false, 'startButton');
+  const stopButton = createStyledButton('Stop', stopTimer, false, 'stopButton');
+  stopButton.style.display = 'none'; // Initially hide the stop button
+
   const resetButton = createStyledButton('Reset', resetTimer);
+
+  const setLoopDurationButton = createStyledButton('Set the current time as loop duration', setLoopDuration);
 
   container.appendChild(startButton);
   container.appendChild(stopButton);
   container.appendChild(resetButton);
+  container.appendChild(setLoopDurationButton);
 
   return container;
 }

@@ -1,3 +1,5 @@
+let canSendChatMessage = true;
+
 function makeElementDraggable(element) {
     let posX = 0,
         posY = 0,
@@ -7,7 +9,7 @@ function makeElementDraggable(element) {
 
     element.addEventListener('mousedown', function (e) {
 
-        if (e.target.tagName === 'SELECT' || e.target.closest('select')) {
+        if (e.target.tagName === 'SELECT' || e.target.closest('select') || e.target.closest('button')) {
             return; // Don't start drag if clicking on a dropdown
         }
         if (isNearResizeArea(e, element)) {
@@ -45,15 +47,66 @@ function makeElementDraggable(element) {
         return e.clientX > rect.right - offset && e.clientY > rect.bottom - offset;
     }
 }
+function createCheckbox(onClick, labelText, checkBoxValue) {
+    // Create a checkbox element
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = checkBoxValue;
 
-function createStyledButton(text, onClick) {
+    // Create a label element
+    const label = document.createElement('label');
+    label.textContent = labelText;
+
+    // Add an event listener for checking and unchecking
+    checkbox.addEventListener('change', () => {
+        console.log(`Checkbox is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
+    });
+
+    // Append the checkbox and label to a container div
+    const container = document.createElement('div');
+    container.className = 'checkbox-container';
+
+    // Add classes to the checkbox and label for further styling
+    checkbox.className = 'checkbox';
+    label.className = 'checkbox-label';
+
+    container.appendChild(label);
+    container.appendChild(checkbox);
+
+    return container;
+}
+
+
+
+function createStyledButton(text, onClick, canPressAndHold, id) {
     const button = document.createElement('button');
     button.innerHTML = text;
     button.classList.add('styled-button'); // Add the CSS class
-    button.addEventListener('click', e => {
+    if (id) button.id = id; // Assign an id to the button
 
-        onClick(); // Call the provided onClick function if active
+    let intervalId = null;
+
+    button.addEventListener('mousedown', () => {
+        // Start calling the function immediately
+        onClick();
+        if (canPressAndHold) {
+            // Set an interval to repeat the function call every 100 milliseconds
+            intervalId = setInterval(onClick, 200);
+        }
     });
+    if (canPressAndHold) {
+        button.addEventListener('mouseup', () => {
+            // Stop the repeating action when the button is released
+            clearInterval(intervalId);
+            intervalId = null;
+        });
+
+        button.addEventListener('mouseleave', () => {
+            // Stop the repeating action if the mouse leaves the button (in case it wasn't released)
+            clearInterval(intervalId);
+            intervalId = null;
+        });
+    }
     return button;
 }
 
@@ -122,5 +175,10 @@ function disableMapRelatedButtons(disable) {
 }
 
 function sendChatMessage(message) {
+    if (!canSendChatMessage) return;
     this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
+}
+
+function toggleChatMessagePermission() {
+    canSendChatMessage = !canSendChatMessage;
 }

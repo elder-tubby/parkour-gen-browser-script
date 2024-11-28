@@ -8,10 +8,8 @@
       {
         "mapId": "map2",
         "mapName": "Parkour Map 2"
-      }
-    ],
-    "Group 2": [
-      {
+      },
+	   {
         "mapId": "map3",
         "mapName": "Parkour Map 3"
       },
@@ -27,6 +25,9 @@
         "mapId": "map9",
         "mapName": "Parkour Map 9"
       }
+    ],
+    "Group 2": [
+     
     ],
     "Group 3": [
       {

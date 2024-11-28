@@ -1,66 +1,96 @@
 let timerInterval = null;
-let timerSeconds = 0;
-let resetTime = 0; // Stores the value of 'x' when timer hits 0
+let currentTimeInSeconds = 0;
+let loopDuration = 0;
 const timerChangeAmount = 3;
 
 function incrementTimer() {
-  timerSeconds += timerChangeAmount;
+  currentTimeInSeconds += timerChangeAmount;
   updateTimerDisplay();
 }
 
 function decrementTimer() {
-  if (timerSeconds >= timerChangeAmount) {
-    timerSeconds -= timerChangeAmount;
+  if (currentTimeInSeconds >= timerChangeAmount) {
+    currentTimeInSeconds -= timerChangeAmount;
     updateTimerDisplay();
   }
 }
 
+function setLoopDuration() {
+  loopDuration = currentTimeInSeconds;
+}
+
 function startTimer() {
 
-  let chatMessage = `Timer started. Next map in ${timerSeconds} seconds.`;
+  toggleStartAndStopButtons();
+
+  let chatMessage = `Timer started. Next map in ${currentTimeInSeconds} seconds.`;
 
   if (timerInterval) return;
-  resetTime = timerSeconds;
+
+
+
   timerInterval = setInterval(() => {
-    if (timerSeconds > 0) {
-      timerSeconds--;
-      if (timerSeconds == 10) {
-        chatMessage = `Next map in ${timerSeconds} seconds`;
-        sendChatMessage(chatMessage);
-      } else if (timerSeconds == 3 || timerSeconds == 2) {
-        chatMessage = `${timerSeconds}`;
-        sendChatMessage(chatMessage);
-      } else if (timerSeconds == 1) {
-        chatMessage = `${timerSeconds}`;
-        sendChatMessage(chatMessage);
+    if (currentTimeInSeconds > 0) {
+      currentTimeInSeconds--;
+      if (currentTimeInSeconds == 10) {
+        chatMessage = `Next map in ${currentTimeInSeconds} seconds`;
+        // sendChatMessage(chatMessage);
+      } else if (currentTimeInSeconds == 3 || currentTimeInSeconds == 2) {
+        chatMessage = `${currentTimeInSeconds}`;
+        // sendChatMessage(chatMessage);
+      } else if (currentTimeInSeconds == 1) {
+        chatMessage = `${currentTimeInSeconds}`;
+        // sendChatMessage(chatMessage);
       }
       updateTimerDisplay();
     } else {
-      // stopTimer();
       selectAndStartRandomMap();
-      timerSeconds = resetTime;
-      updateTimerDisplay();
-      showNotification('Timer finished!');
 
+      showNotification('Timer finished!');
+      if (loopDuration == 0) {
+        console.log("stoppihn timer");
+        stopTimer();
+        return;
+      }
+      
+      currentTimeInSeconds = loopDuration;
+      updateTimerDisplay();
     }
   }, 1000);
 }
 
 function stopTimer() {
+
+  toggleStartAndStopButtons();
+
   clearInterval(timerInterval);
   timerInterval = null;
 }
 
 function resetTimer() {
   stopTimer();
-  timerSeconds = 0;
-  resetTime = 0;  // Clear resetTime when resetting
+  currentTimeInSeconds = 0;
+  loopDuration = 0;
   updateTimerDisplay();
 }
 
 function updateTimerDisplay() {
-  const minutes = Math.floor(timerSeconds / 60);
-  const seconds = timerSeconds % 60;
+  const minutes = Math.floor(currentTimeInSeconds / 60);
+  const seconds = currentTimeInSeconds % 60;
   document.getElementById('timerDisplay').innerHTML =
     String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+}
+
+// Function to toggle visibility between buttons
+function toggleStartAndStopButtons() {
+  const startButton = document.getElementById('startButton');
+  const stopButton = document.getElementById('stopButton');
+
+  if (startButton.style.display !== 'none') {
+    startButton.style.display = 'none';
+    stopButton.style.display = 'block';
+  } else {
+    startButton.style.display = 'block';
+    stopButton.style.display = 'none';
+  }
 }
