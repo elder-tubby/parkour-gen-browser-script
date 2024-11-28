@@ -2,13 +2,10 @@
 class Dropdown {
     constructor(options, placeholder, container) {
         this.dropdown = this.createDropdown(options, placeholder, container);
-        console.log(this.dropdown);
         this.dropdown.addEventListener('change', this.handleChange.bind(this));
     }
 
     handleChange(event) {
-        // Base change handler, can be overridden
-        console.log('Selected value:', event.target.value);
     }
 
     getElement() {
@@ -60,7 +57,6 @@ class Dropdown {
         dropdown.appendChild(placeholderOption);
 
         if (!options) {
-            console.log("options missing in createDropdown");
             return dropdown;
         }
 
@@ -80,7 +76,6 @@ class Dropdown {
 // Class to manage Type dropdown with nested Group dropdowns
 class TypeDropdown extends Dropdown {
     constructor(container) {
-        console.log("mapsStructureData in type DD constructor: ", mapsStructureData);
         super(Object.keys(mapsStructureData), 'Select Type', container); // Append the TypeDropdown to the container
         this.groupsDropdown = null;
         this.container = container;
@@ -114,7 +109,6 @@ class TypeDropdown extends Dropdown {
 
         // If there are map groups, create or update the group dropdown
         if (listOfGroups) {
-            console.log("yes there are map groups on toggle visiblity of tpye");
             this.createGroupDropdown();
         }
         if (selectedState.type === Object.keys(mapsStructureData)[1]) {
@@ -129,7 +123,6 @@ class TypeDropdown extends Dropdown {
 
         if (!this.groupsDropdown) {
             const firstType = Object.keys(mapsStructureData)[0];  // Get the first key (type) from mapsStructureData
-            console.log("groups DD doesn;t exist");
             listOfGroups = mapsStructureData[firstType];  // Get the groups data for the first type
             this.groupsDropdown = new GroupDropdown(this.container, listOfGroups);
 
@@ -139,8 +132,6 @@ class TypeDropdown extends Dropdown {
             this.groupsDropdown.setOptions(Object.keys(listOfGroups), this.groupsDropdown.placeholderText);
             this.groupsDropdown.show();  // Show the dropdown after updating options
         }
-        console.log("selected type i ncreate group DD: ", selectedState.type);
-        console.log("map groups in create groupdropdow: ", listOfGroups);
 
     }
 }
@@ -148,9 +139,7 @@ class TypeDropdown extends Dropdown {
 // Class to manage Group dropdown, which in turn manages the Map dropdown
 class GroupDropdown extends Dropdown {
     constructor(container, listOfGroups) {
-        console.log("list of groups: ", listOfGroups);
         const groupKeys = Object.keys(listOfGroups);
-        console.log("object key list of groups: ", groupKeys);
         super(groupKeys, 'Select Map Group', container);
         this.placeholderText = 'Select Map Group';
         this.container = container;
@@ -163,7 +152,6 @@ class GroupDropdown extends Dropdown {
     handleChange(event) {
         super.handleChange(event);
         selectedState.group = event.target.value;
-        console.log("map groups in handlechange of groups DD: ", this.listOfGroups);
         this.createMapDropdown();
         selectedState.mapId = null;
         disableMapRelatedButtons(true);
@@ -211,9 +199,7 @@ class MapDropdown extends Dropdown {
     }
 
     setOptions(maps) {
-        console.log("maps in setOptions of map DD: ", maps);
         const options = maps.map(map => {
-            console.log("map name: ", map.mapName);
             return {
                 value: map.mapId,
                 label: map.mapName // Assuming 'mapName' is the name of the map

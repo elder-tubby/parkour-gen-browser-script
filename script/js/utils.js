@@ -61,7 +61,6 @@ function createCheckbox(onClick, labelText, checkBoxValue) {
     // Add an event listener for checking and unchecking
     checkbox.addEventListener('change', () => {
         onClick();
-        console.log(`Checkbox is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
     });
 
     // Append the checkbox and label to a container div
@@ -118,10 +117,6 @@ function createNotificationElement() {
 }
 
 function toggleButtonVisibility() {
-
-    console.log("selectedType in toggleButtonVisibility: ", selectedState.type);
-    console.log("mapsStructureData[0]: ", Object.keys(mapsStructureData)[0]);
-
     const type1UiElementsContainer = document.getElementById('type1-button-container');
     type1UiElementsContainer.style.display = 'none';
 
@@ -176,7 +171,6 @@ function disableMapRelatedButtons(disable) {
 
 function sendChatMessage(message) {
     if (!canSendChatMessage) return;
-    console.log("chat message sent");
     this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
 
@@ -184,6 +178,7 @@ function toggleChatMessagePermission() {
     canSendChatMessage = !canSendChatMessage;
 }
 
-function toggleKeepPostion(){
+function toggleKeepPostion() {
     window.parkourGenerator.keepPositions = !window.parkourGenerator.keepPositions;
+    console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
 }

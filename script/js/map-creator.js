@@ -203,8 +203,6 @@ async function pasteAndStart() {
 
             window.bonkHost.startGame();
             window.parkourGenerator.keepPositions = tempKeepPositionsValue;
-            console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
-
         } else {
             showNotification('Clipboard is empty. Copy map data first.');
         }

@@ -114,7 +114,7 @@ function createMapAndTimerUI(container) {
   container.appendChild(controlButtonContainer);
   container.appendChild(pasteAndStartButton);
   container.appendChild(chatMessageToggleContainer);
-  // container.appendChild(keepPostionsContainer);
+  container.appendChild(keepPostionsContainer);
 }
 
 function createType1ButtonContainer(container) {

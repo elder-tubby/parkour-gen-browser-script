@@ -276,10 +276,6 @@ function showNotification(message, duration = 3000) {
     }, duration);
 }
 
-
-console.log("Loaded ui.js");
-
-
 if (document.getElementById('mainUIPanel')) {
     console.log('UI already exists, skipping creation.');
     // return;

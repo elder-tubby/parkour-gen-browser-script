@@ -147,14 +147,14 @@ window.bonkCodeInjectors.push((bonkCode) => {
         console.log("Code injected for Parkour Generator in injector.js.")
         return bonkAPI.injector(bonkCode);
     } catch (error) {
-        alert('Code injection for parkour generator failed in injector.js.');
+        console.log('Code injection for parkour generator failed in injector.js.');
         throw error;
     }
 });
 
 window.bonkAPI.events.addEventListener("capZoneEvent", function (data) {
     const { capID, playerID, currentFrame } = data;
-    console.log(`Player ${playerID} touched the cap zone ${capID} at frame ${currentFrame}`);
+    // console.log(`Player ${playerID} touched the cap zone ${capID} at frame ${currentFrame}`);
 });
 
 
