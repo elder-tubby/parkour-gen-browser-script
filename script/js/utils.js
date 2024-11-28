@@ -175,11 +175,15 @@ function disableMapRelatedButtons(disable) {
 }
 
 function sendChatMessage(message) {
-    // if (!canSendChatMessage) return;
+    if (!canSendChatMessage) return;
     console.log("chat message sent");
     this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
 
 function toggleChatMessagePermission() {
     canSendChatMessage = !canSendChatMessage;
+}
+
+function toggleKeepPostion(){
+    window.parkourGenerator.keepPositions = !window.parkourGenerator.keepPositions;
 }

@@ -200,15 +200,16 @@ async function pasteAndStart() {
 
         // Check if parsedData has the 'spawn' and 'lines' properties
         if (parsedData && parsedData.spawn && Array.isArray(parsedData.lines)) {
-            showNotification('Map generated successfully! Starting the map...');
             createMap(text);
 
+            const tempKeepPositionsValue = window.parkourGenerator.keepPositions;
             const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
             if (isLobbyHidden) {
-                window.parkourGenerator.keepPositions = true;
+                window.parkourGenerator.keepPositions = false;
             }
 
             window.bonkHost.startGame();
+            window.parkourGenerator.keepPositions = tempKeepPositionsValue;
         } else {
             showNotification('Clipboard is empty. Copy map data first.');
         }
@@ -226,10 +227,9 @@ async function createAndStartMap() {
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
-        window.parkourGenerator.keepPositions = true;
+        // window.parkourGenerator.keepPositions = true;
     }
-    window.parkourGenerator.keepPositions = true;
-
+    
     console.log("end of  createandstartmap ");
     window.bonkHost.startGame();
 }
