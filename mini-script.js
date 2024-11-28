@@ -1,3 +1,16 @@
+// ==UserScript==
+// @name         Parkour Generator (Mini)
+// @namespace    https://github.com/elder-tubby/parkour-gen-browser-script/blob/main/mini-script-loader.js
+// @version      0.9
+// @description  Mini version of script to convert elder-tubby's parkour generator data to bonk.io maps.
+// @author       eldertubby + Salama
+// @match        https://bonkisback.io/gameframe-release.html
+// @match        https://bonk.io/gameframe-release.html
+// @grant        none
+// @updateURL    https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/mini-script.js
+// @downloadURL  https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/mini-script.js
+// ==/UserScript==
+
 
 // Create a new <style> element
 const style = document.createElement('style');
@@ -106,7 +119,7 @@ document.head.appendChild(style);
 function createContainer() {
     const container = document.createElement('div');
     container.id = 'mainUIPanel';
-    makeElementDraggable(container); 
+    makeElementDraggable(container);
     return container;
 }
 
@@ -126,27 +139,27 @@ function createContentWrapper() {
 
 function createToggleButton(container, contentWrapper) {
     const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = '-'; 
+    toggleButton.innerHTML = '-';
     toggleButton.classList.add('toggle-button');
 
-    let isCollapsed = false; 
+    let isCollapsed = false;
 
     toggleButton.addEventListener('click', () => {
         if (!isCollapsed) {
             contentWrapper.style.display = 'none';
-            container.style.height = '30px'; 
+            container.style.height = '30px';
             container.style.overflow = 'hidden';
             toggleButton.innerHTML = '+';
         } else {
 
             contentWrapper.style.display = 'block';
-            container.style.height = ''; 
-            toggleButton.innerHTML = '-'; 
+            container.style.height = '';
+            toggleButton.innerHTML = '-';
           }
         isCollapsed = !isCollapsed;
     });
 
-    container.appendChild(toggleButton); 
+    container.appendChild(toggleButton);
 }
 
 function createMainUI() {
@@ -154,10 +167,10 @@ function createMainUI() {
     const heading = createHeading();
     const contentWrapper = createContentWrapper();
 
-    container.appendChild(heading); 
-    container.appendChild(contentWrapper); 
+    container.appendChild(heading);
+    container.appendChild(contentWrapper);
     const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-generator-browser-script/refs/heads/main/map-data/groups.json';
-    createToggleButton(container, contentWrapper); 
+    createToggleButton(container, contentWrapper);
 
     const pasteAndStartButton = createStyledButton(
         'Paste Data And Start',

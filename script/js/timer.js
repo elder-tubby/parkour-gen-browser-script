@@ -66,7 +66,7 @@ function stopTimer() {
 }
 
 function resetTimer() {
-  stopTimer();
+  if (timerInterval) stopTimer();
   currentTimeInSeconds = 0;
   loopDuration = 0;
   updateTimerDisplay();

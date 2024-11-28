@@ -7,7 +7,6 @@ async function createMap(pastedMapData) {
         try {
             // Await the fetching of map data
             const currentMapData = await fetchCurrentMapData();
-            console.log("start of  createamap ");
             const randomMapAndAuthor = await fetchRandomMapAndAuthorNames();
             handleMapCreation(currentMapData, randomMapAndAuthor);  // Pass the fetched data to the map creation function
         } catch (error) {
@@ -21,11 +20,6 @@ async function createMap(pastedMapData) {
 
 
 function handleMapCreation(currentMapData, randomMapAndAuthor) {
-    console.log("currentMapData in handleMapCreation: ", currentMapData);
-    console.log("Random map and author pair: ", randomMapAndAuthor);
-
-    console.log("currentMapData in handlemapcreations: ", currentMapData);
-
     try {
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
@@ -44,7 +38,6 @@ function handleMapCreation(currentMapData, randomMapAndAuthor) {
             console.error('Error parsing JSON:', error);
         }
         // Extract spawn values
-        console.log("inputData: ", inputData);
 
         const spawnX = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnX : 99999;
         const spawnY = inputData.spawn !== null && inputData.spawn !== undefined ? inputData.spawn.spawnY : 99999;
@@ -220,17 +213,13 @@ async function pasteAndStart() {
 }
 
 async function createAndStartMap() {
-    console.log("start of  createandstartmap ");
-    console.log("before createMap in createandstartmap");
     await createMap();
-    console.log("after createMap in createandstartmap");
 
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
         // window.parkourGenerator.keepPositions = true;
     }
-    
-    console.log("end of  createandstartmap ");
+
     window.bonkHost.startGame();
 }
 
@@ -265,7 +254,6 @@ function selectAndStartRandomMap() {
     selectedState.mapId = randomMap.mapId;
 
     // Optionally, log the selected map details
-    console.log('Selected random map:', randomMap);
     updateMapDropdown();
     // Call createAndStartMap() to start the new map
     createAndStartMap();

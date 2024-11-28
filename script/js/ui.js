@@ -28,7 +28,6 @@ function createMainUI() {
     })
     .catch(error => {
       console.error('Error loading map structure file:', error);
-      alert('Failed to load map structure. Please try again later.');
     });
   document.body.appendChild(container);
   return container;
