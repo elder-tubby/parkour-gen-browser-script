@@ -195,13 +195,14 @@ async function pasteAndStart() {
         if (parsedData && parsedData.spawn && Array.isArray(parsedData.lines)) {
             createMap(text);
 
-            const tempKeepPositionsValue = window.parkourGenerator.keepPositions;
+            let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
             const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
             if (isLobbyHidden) {
                 window.parkourGenerator.keepPositions = false;
             }
 
             window.bonkHost.startGame();
+            console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
             window.parkourGenerator.keepPositions = tempKeepPositionsValue;
         } else {
             showNotification('Clipboard is empty. Copy map data first.');
