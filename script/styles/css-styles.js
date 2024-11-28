@@ -37,16 +37,6 @@ style.innerHTML = `
   /* Set gap between buttons */
 }
 
-/* Control Button Container */
-.timer-start-stop-container {
-  /* display: flex;
-  flex-wrap: wrap; Allow items to wrap to the next line */
-}
-
-.timer-start-stop-container>button {
-  /* flex: 0 1 auto; Adjust button size */
-  /* margin-bottom: 5px; Space between rows */
-}
 
 .timer-start-stop-container>button:nth-child(1),
 .timer-start-stop-container>button:nth-child(2) {
@@ -284,13 +274,13 @@ style.innerHTML = `
   transition: all 0.3s ease;
 }
 
-#mapGroupDropdownContainer,
-#mapsListDropdownContainer {
-  width: 100%;
+/* #mapGroupDropdownContainer,
+#mapsListDropdownContainer { */
+/* width: 100%; */
 
-  /* Make sure containers are full width */
-  /* padding: 5px; */
-}
+/* Make sure containers are full width */
+/* padding: 5px; */
+/* } */
 
 .checkbox-container {
   display: flex;
@@ -311,6 +301,10 @@ style.innerHTML = `
   left: 10px;
   font-family: 'futurept_b1';
   /* Make sure 'futurept_b1' is available or fallback to sans-serif */
+}
+
+.set-loop-duration-button {
+  font-size: 12px;
 }
 `;
 
