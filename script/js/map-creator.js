@@ -180,7 +180,7 @@ function handleMapCreation(currentMapData, randomMapAndAuthor) {
 
 async function pasteAndStart() {
     try {
-        const text = await navigator.clipboard.readText();
+        let text = await navigator.clipboard.readText();
 
         // Trim any leading or trailing whitespace from the text
         text = text.trim();

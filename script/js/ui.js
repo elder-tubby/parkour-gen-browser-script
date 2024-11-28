@@ -106,7 +106,7 @@ function createMapAndTimerUI(container) {
   const timerButtonContainer = createTimerButtonContainer();
   const controlButtonContainer = createControlButtonContainer();
   const pasteAndStartButton = createPasteAndStartButton();
-  const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts", true);
+  const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts");
   
   // Append UI elements to container
   container.appendChild(timerDisplay);

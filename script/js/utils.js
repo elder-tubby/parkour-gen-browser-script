@@ -60,6 +60,7 @@ function createCheckbox(onClick, labelText, checkBoxValue) {
 
     // Add an event listener for checking and unchecking
     checkbox.addEventListener('change', () => {
+        onClick();
         console.log(`Checkbox is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
     });
 
