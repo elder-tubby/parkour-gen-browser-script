@@ -49,6 +49,7 @@ function makeElementDraggable(element) {
 }
 
 function createCheckbox(onClick, labelText, checkBoxValue) {
+    console.log(`checkboxvalue is ${checkBoxValue} for ${labelText}`);
     // Create a checkbox element
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -60,7 +61,7 @@ function createCheckbox(onClick, labelText, checkBoxValue) {
 
     // Add an event listener for checking and unchecking
     checkbox.addEventListener('change', () => {
-        onClick();
+        onClick(checkbox.checked);
     });
 
     // Append the checkbox and label to a container div
@@ -174,11 +175,23 @@ function sendChatMessage(message) {
     this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
 
-function toggleChatMessagePermission() {
-    canSendChatMessage = !canSendChatMessage;
+function toggleChatMessagePermission(checkBoxValue) {
+    // If checkBoxValue exists, set canSendChatMessage to that value
+    if (checkBoxValue != null) {
+        canSendChatMessage = checkBoxValue;
+    } else {
+        // Otherwise, toggle the value of canSendChatMessage
+        canSendChatMessage = !canSendChatMessage;
+    }
 }
+function toggleKeepPostion(checkBoxValue) {
+    // If newValue is provided, set keepPositions to that value
+    if (checkBoxValue != null) {
+        window.parkourGenerator.keepPositions = checkBoxValue;
+    } else {
+        // Otherwise, toggle the current value of keepPositions
+        window.parkourGenerator.keepPositions = !window.parkourGenerator.keepPositions;
+    }
 
-function toggleKeepPostion() {
-    window.parkourGenerator.keepPositions = !window.parkourGenerator.keepPositions;
     console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
 }

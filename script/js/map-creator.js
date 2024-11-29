@@ -214,7 +214,8 @@ async function pasteAndStart() {
 
 async function createAndStartMap() {
     await createMap();
-
+    
+    let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
         window.parkourGenerator.keepPositions = true;
@@ -222,7 +223,6 @@ async function createAndStartMap() {
         console.log("isLobbyHidden: ", isLobbyHidden);
     }
 
-    let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
     window.bonkHost.startGame();
     window.parkourGenerator.keepPositions = tempKeepPositionsValue;
 }
