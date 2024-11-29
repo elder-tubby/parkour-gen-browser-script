@@ -197,8 +197,9 @@ function toggleKeepPostion(checkBoxValue) {
 }
 
 function startGameWithBonkHostKeepPosOff() {
-    let tempBonkHostKeepPosValue = window.bonkHost.keepState;
-    window.bonkHost.keepState = false;
-    window.bonkHost.startGame();
-    window.bonkHost.keepState = tempBonkHostKeepPosValue;
+    const w = parent.frames[0];
+    let tempBonkHostKeepPosValue = w.bonkHost.keepState;
+    w.bonkHost.keepState = false;
+    w.bonkHost.startGame();
+    w.bonkHost.keepState = tempBonkHostKeepPosValue;
 }
