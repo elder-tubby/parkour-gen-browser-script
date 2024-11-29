@@ -214,14 +214,14 @@ async function pasteAndStart() {
 
 async function createAndStartMap() {
     await createMap();
-    
+
     let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
-    const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
-    if (isLobbyHidden) {
-        window.parkourGenerator.keepPositions = true;
-        console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
-        console.log("isLobbyHidden: ", isLobbyHidden);
-    }
+    // const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
+    // if (isLobbyHidden) {
+    //     window.parkourGenerator.keepPositions = true;
+    //     console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
+    //     console.log("isLobbyHidden: ", isLobbyHidden);
+    // }
 
     window.bonkHost.startGame();
     window.parkourGenerator.keepPositions = tempKeepPositionsValue;
