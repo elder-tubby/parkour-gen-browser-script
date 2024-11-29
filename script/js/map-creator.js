@@ -193,7 +193,7 @@ async function pasteAndStart() {
 
         // Check if parsedData has the 'spawn' and 'lines' properties
         if (parsedData && parsedData.spawn && Array.isArray(parsedData.lines)) {
-            createMap(text);
+            await createMap(text);
 
             let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
             const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
