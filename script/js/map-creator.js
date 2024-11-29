@@ -218,6 +218,8 @@ async function createAndStartMap() {
     const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
     if (isLobbyHidden) {
         window.parkourGenerator.keepPositions = true;
+        console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
+        console.log("isLobbyHidden: ", isLobbyHidden);
     }
 
     window.bonkHost.startGame();
