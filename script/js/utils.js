@@ -195,3 +195,10 @@ function toggleKeepPostion(checkBoxValue) {
 
     console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
 }
+
+function startGameWithBonkHostKeepPosOff() {
+    let tempBonkHostKeepPosValue = window.bonkHost.keepState;
+    window.bonkHost.keepState = false;
+    window.bonkHost.startGame();
+    window.bonkHost.keepState = tempBonkHostKeepPosValue;
+}

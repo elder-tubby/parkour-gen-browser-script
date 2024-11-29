@@ -201,7 +201,8 @@ async function pasteAndStart() {
                 window.parkourGenerator.keepPositions = false;
             }
 
-            window.bonkHost.startGame();
+            // window.bonkHost.startGame();
+            startGameWithBonkHostKeepPosOff();
             window.parkourGenerator.keepPositions = tempKeepPositionsValue;
         } else {
             showNotification('Clipboard is empty. Copy map data first.');
@@ -223,7 +224,9 @@ async function createAndStartMap() {
     //     console.log("isLobbyHidden: ", isLobbyHidden);
     // }
 
-    window.bonkHost.startGame();
+    // window.bonkHost.startGame();
+
+    startGameWithBonkHostKeepPosOff();
     window.parkourGenerator.keepPositions = tempKeepPositionsValue;
 }
 
