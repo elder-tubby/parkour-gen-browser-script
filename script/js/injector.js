@@ -20,7 +20,7 @@ let injector = str => {
     const SET_STATE = `
               if (
                   ${BIGVAR}.bonkHost.state &&
-                  window.bonkHost.keepState &&
+                  
                   window.parkourGenerator.keepPositions &&
                   window.bonkHost.toolFunctions.getGameSettings().ga === "b"
                   ) {
