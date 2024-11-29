@@ -222,7 +222,9 @@ async function createAndStartMap() {
         console.log("isLobbyHidden: ", isLobbyHidden);
     }
 
+    let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
     window.bonkHost.startGame();
+    window.parkourGenerator.keepPositions = tempKeepPositionsValue;
 }
 
 
