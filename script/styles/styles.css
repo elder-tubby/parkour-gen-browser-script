@@ -1,13 +1,3 @@
-/* Container styles */
-.container {
-  display: flex;
-  flex-direction: column;
-  /* Stack buttons vertically */
-  align-items: center;
-  /* Center items horizontally */
-  padding: 5px;
-  /* Optional padding for better spacing */
-}
 
 /* Create Map Button */
 .create-map-button {
@@ -53,7 +43,7 @@
 }
 
 /* Main container styles */
-#mainUIPanel {
+#container {
   position: fixed;
   top: 50px;
   left: 50px;
