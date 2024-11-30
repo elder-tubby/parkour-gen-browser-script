@@ -151,8 +151,8 @@
 //   const container = document.createElement('div');
 //   container.classList.add('timer-change-container');
 
-//   const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer, true);
-//   const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer, true);
+//   const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, increment, true);
+//   const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrement, true);
 //   incrementButton.style.width = '70px';
 //   decrementButton.style.width = '70px';
 
@@ -166,8 +166,8 @@
 //   const innerContainer = document.createElement('div');
 //   innerContainer.classList.add('timer-start-stop-container');
 
-//   const startButton = createStyledButton('Start', startTimer, false, 'startButton');
-//   const stopButton = createStyledButton('Pause', stopTimer, false, 'stopButton');
+//   const startButton = createStyledButton('Start', start, false, 'startButton');
+//   const stopButton = createStyledButton('Pause', stop, false, 'stopButton');
 //   stopButton.style.display = 'none'; // Initially hide the stop button
 
 //   const resetButton = createStyledButton('Reset', resetTimer);

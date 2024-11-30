@@ -1,8 +1,8 @@
 class App {
     constructor() {
-        this.container = this.createMainContainer();
+        this.mainContainer = this.createMainContainer();
         this.heading = this.createMainHeading();
-        this.contentWrapper = this.createContentWrapper();
+        this.contentWrapper = this.createContentWrapper(); // used to separate the toggle visibility button from the rest of the UI
         this.isCollapsed = false;
         this.init();
     }
@@ -15,19 +15,17 @@ class App {
                 new TypeDropdown(this.contentWrapper);
                 this.createUIForType1();
                 // this.createUIForType2();
-                this.createTimerUI();
+                new TimerUI(contentWrapper);
                 this.createOtherUI();
             })
             .catch(error => {
                 console.error('Error loading map structure file:', error);
             });
 
-        this.container.appendChild(this.heading);
-        this.container.appendChild(this.contentWrapper);
-        document.body.appendChild(this.container);
+        this.mainContainer.appendChild(this.heading);
+        this.mainContainer.appendChild(this.contentWrapper);
+        document.body.appendChild(this.mainContainer);
     }
-
-
 
     createMainContainer() {
         const container = document.createElement('div');
@@ -59,19 +57,19 @@ class App {
             if (!this.isCollapsed) {
                 // Collapse the container
                 this.contentWrapper.style.display = 'none';
-                this.container.style.height = '40px'; // Shrink to just show the toggle button
-                this.container.style.overflow = 'hidden'; // Hide scrollbars when collapsed
+                this.mainContainer.style.height = '40px'; // Shrink to just show the toggle button
+                this.mainContainer.style.overflow = 'hidden'; // Hide scrollbars when collapsed
                 toggleButton.innerHTML = '+'; // Change to "+" when collapsed
             } else {
                 // Expand the container
                 this.contentWrapper.style.display = 'block';
-                this.container.style.height = ''; // Auto height based on content
+                this.mainContainer.style.height = ''; // Auto height based on content
                 toggleButton.innerHTML = '-'; // Change to "-" when expanded
             }
             this.isCollapsed = !this.isCollapsed;
         });
 
-        this.container.appendChild(toggleButton); // Append toggle button to the container
+        this.mainContainer.appendChild(toggleButton); // Append toggle button to the container
     }
 
     createUIForType2() {
@@ -88,7 +86,7 @@ class App {
         startFirstMapButton.classList.add('paste-start-button');
         startFirstMapButton.id = 'startFirstMapButton';  // Assign an ID
 
-        this.container.appendChild(startFirstMapButton);
+        this.mainContainer.appendChild(startFirstMapButton);
     }
 
     createOtherUI() {
@@ -96,24 +94,9 @@ class App {
         const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts", true);
         const keepPostionsContainer = createCheckbox(toggleKeepPostion, "Keep positions", true);
 
-        this.container.appendChild(pasteAndStartButton);
-        this.container.appendChild(chatMessageToggleContainer);
-        this.container.appendChild(keepPostionsContainer);
-    }
-
-    createTimerUI() {
-        this.container.classList.add('map-timer-container');
-
-        // Create UI elements
-        const timerDisplay = this.createTimerDisplay();
-        const timerButtonContainer = this.createTimerChangeContainer();
-        const timerOptionsContainer = this.createTimerOptionsContainer();
-
-        // Append UI elements to container
-        this.container.appendChild(timerDisplay);
-        this.container.appendChild(timerButtonContainer);
-        this.container.appendChild(timerOptionsContainer);
-
+        this.mainContainer.appendChild(pasteAndStartButton);
+        this.mainContainer.appendChild(chatMessageToggleContainer);
+        this.mainContainer.appendChild(keepPostionsContainer);
     }
 
     createUIForType1() {
@@ -134,56 +117,7 @@ class App {
         type1ButtonContainer.appendChild(createMapButton);
         type1ButtonContainer.appendChild(createAndStartButton);
 
-        this.container.appendChild(type1ButtonContainer);
-    }
-
-    createTimerDisplay() {
-        const timerDisplay = document.createElement('div');
-        timerDisplay.id = 'timerDisplay';
-        timerDisplay.classList.add('timer-display');
-        timerDisplay.innerHTML = '00:00';
-
-        return timerDisplay;
-    }
-
-    createTimerChangeContainer() {
-        const container = document.createElement('div');
-        container.classList.add('timer-change-container');
-
-        const incrementButton = createStyledButton(`+${timerChangeAmount} Sec`, incrementTimer, true);
-        const decrementButton = createStyledButton(`-${timerChangeAmount} Sec`, decrementTimer, true);
-        incrementButton.style.width = '70px';
-        decrementButton.style.width = '70px';
-
-        container.appendChild(incrementButton);
-        container.appendChild(decrementButton);
-
-        return container;
-    }
-
-    createTimerOptionsContainer() {
-        const innerContainer = document.createElement('div');
-        innerContainer.classList.add('timer-start-stop-container');
-
-        const startButton = createStyledButton('Start', startTimer, false, 'startButton');
-        const stopButton = createStyledButton('Pause', stopTimer, false, 'stopButton');
-        stopButton.style.display = 'none'; // Initially hide the stop button
-
-        const resetButton = createStyledButton('Reset', resetTimer);
-
-        const setLoopDurationButton = createStyledButton('Set current time as loop duration', setLoopDuration);
-        setLoopDurationButton.classList.add('set-loop-duration-button');
-
-        innerContainer.appendChild(startButton);
-        innerContainer.appendChild(stopButton);
-        innerContainer.appendChild(resetButton);
-
-        const outerContainer = document.createElement('div');
-
-        outerContainer.appendChild(innerContainer);
-        outerContainer.appendChild(setLoopDurationButton);
-
-        return outerContainer;
+        this.mainContainer.appendChild(type1ButtonContainer);
     }
 
     createPasteAndStartButton() {

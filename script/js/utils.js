@@ -172,7 +172,7 @@ function disableMapRelatedButtons(disable) {
 
 function sendChatMessage(message) {
     if (!canSendChatMessage) return;
-    this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
+    // this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
 }
 
 function toggleChatMessagePermission(checkBoxValue) {

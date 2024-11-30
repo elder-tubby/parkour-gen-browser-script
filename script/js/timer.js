@@ -1,94 +1,98 @@
-let timerInterval = null;
-let currentTimeInSeconds = 0;
-let loopDuration = 0;
-const timerChangeAmount = 3;
+class Timer {
 
-function incrementTimer() {
-  currentTimeInSeconds += timerChangeAmount;
-  updateTimerDisplay();
-}
-
-function decrementTimer() {
-  if (currentTimeInSeconds >= timerChangeAmount) {
-    currentTimeInSeconds -= timerChangeAmount;
-    updateTimerDisplay();
+  constructor() {
+    this.timerInterval = null;
+    this.currentTimeInSeconds = 0;
+    this.loopDuration = 0;
+    this.timerChangeAmount = 3;
+    this.chatMessage = ``;
   }
-}
+  
+  increment() {
+    this.currentTimeInSeconds += this.timerChangeAmount;
+    this.updateDisplay();
+  }
 
-function setLoopDuration() {
-  loopDuration = currentTimeInSeconds;
-}
-
-function startTimer() {
-
-  toggleStartAndStopButtons();
-
-  let chatMessage = `Timer started. Next map in ${currentTimeInSeconds} seconds.`;
-
-  if (timerInterval) return;
-
-  timerInterval = setInterval(() => {
-    if (currentTimeInSeconds > 0) {
-      currentTimeInSeconds--;
-      if (currentTimeInSeconds == 10) {
-        chatMessage = `Next map in ${currentTimeInSeconds} seconds`;
-        sendChatMessage(chatMessage);
-      } else if (currentTimeInSeconds == 3 || currentTimeInSeconds == 2) {
-        chatMessage = `${currentTimeInSeconds}`;
-        sendChatMessage(chatMessage);
-      } else if (currentTimeInSeconds == 1) {
-        chatMessage = `${currentTimeInSeconds}`;
-        sendChatMessage(chatMessage);
-      }
-      updateTimerDisplay();
-    } else {
-      selectAndStartRandomMap();
-
-      showNotification('Timer finished!');
-      if (loopDuration == 0) {
-        console.log("stoppihn timer");
-        stopTimer();
-        return;
-      }
-
-      currentTimeInSeconds = loopDuration;
-      updateTimerDisplay();
+  decrement() {
+    if (this.currentTimeInSeconds >= this.timerChangeAmount) {
+      this.currentTimeInSeconds -= this.timerChangeAmount;
+      this.updateDisplay();
     }
-  }, 1000);
-}
+  }
 
-function stopTimer() {
+  setLoopDuration() {
+    this.loopDuration = this.currentTimeInSeconds;
+  }
 
-  toggleStartAndStopButtons();
+  start() {
 
-  clearInterval(timerInterval);
-  timerInterval = null;
-}
+    this.toggleStartAndStopButtons();
 
-function resetTimer() {
-  if (timerInterval) stopTimer();
-  currentTimeInSeconds = 0;
-  loopDuration = 0;
-  updateTimerDisplay();
-}
+    if (this.timerInterval) return;
 
-function updateTimerDisplay() {
-  const minutes = Math.floor(currentTimeInSeconds / 60);
-  const seconds = currentTimeInSeconds % 60;
-  document.getElementById('timerDisplay').innerHTML =
-    String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-}
+    this.timerInterval = setInterval(() => {
+      if (this.currentTimeInSeconds > 0) {
+        this.currentTimeInSeconds--;
+        if (this.currentTimeInSeconds == 10) {
+          this.chatMessage = `Next map in ${this.currentTimeInSeconds} seconds`;
+          sendChatMessage(this.chatMessage);
+        } else if (this.currentTimeInSeconds == 3 || this.currentTimeInSeconds == 2) {
+          this.chatMessage = `${this.currentTimeInSeconds}`;
+          sendChatMessage(this.chatMessage);
+        } else if (this.currentTimeInSeconds == 1) {
+          this.chatMessage = `${this.currentTimeInSeconds}`;
+          sendChatMessage(this.chatMessage);
+        }
+        this.updateDisplay();
+      } else {
+        selectAndStartRandomMap();
 
-// Function to toggle visibility between buttons
-function toggleStartAndStopButtons() {
-  const startButton = document.getElementById('startButton');
-  const stopButton = document.getElementById('stopButton');
+        showNotification('Timer finished!');
+        if (this.loopDuration == 0) {
+          console.log("stoppihn timer");
+          this.stop();
+          return;
+        }
 
-  if (startButton.style.display !== 'none') {
-    startButton.style.display = 'none';
-    stopButton.style.display = 'block';
-  } else {
-    startButton.style.display = 'block';
-    stopButton.style.display = 'none';
+        this.currentTimeInSeconds = this.loopDuration;
+        this.updateDisplay();
+      }
+    }, 1000);
+  }
+
+  stop() {
+
+    this.toggleStartAndStopButtons();
+
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+  }
+
+  reset() {
+    if (this.timerInterval) stop();
+    this.currentTimeInSeconds = 0;
+    this.loopDuration = 0;
+    this.updateDisplay();
+  }
+
+  updateDisplay() {
+    const minutes = Math.floor(this.currentTimeInSeconds / 60);
+    const seconds = this.currentTimeInSeconds % 60;
+    document.getElementById('timerDisplay').innerHTML =
+      String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+  }
+
+  // to toggle visibility between buttons
+  toggleStartAndStopButtons() {
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+
+    if (startButton.style.display !== 'none') {
+      startButton.style.display = 'none';
+      stopButton.style.display = 'block';
+    } else {
+      startButton.style.display = 'block';
+      stopButton.style.display = 'none';
+    }
   }
 }
