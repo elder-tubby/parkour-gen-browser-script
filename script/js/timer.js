@@ -35,19 +35,19 @@ class Timer {
         this.currentTimeInSeconds--;
         if (this.currentTimeInSeconds == 10) {
           this.chatMessage = `Next map in ${this.currentTimeInSeconds} seconds`;
-          sendChatMessage(this.chatMessage);
+          ChatManager.sendChatMessage(this.chatMessage);
         } else if (this.currentTimeInSeconds == 3 || this.currentTimeInSeconds == 2) {
           this.chatMessage = `${this.currentTimeInSeconds}`;
-          sendChatMessage(this.chatMessage);
+          ChatManager.sendChatMessage(this.chatMessage);
         } else if (this.currentTimeInSeconds == 1) {
           this.chatMessage = `${this.currentTimeInSeconds}`;
-          sendChatMessage(this.chatMessage);
+          ChatManager.sendChatMessage(this.chatMessage);
         }
         this.updateDisplay();
       } else {
-        selectAndStartRandomMap();
+        MapManager.selectAndStartRandomMap();
 
-        showNotification('Timer finished!');
+        NotificationManager.show('Timer finished!');
         if (this.loopDuration == 0) {
           console.log("stoppihn timer");
           this.stop();

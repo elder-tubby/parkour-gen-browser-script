@@ -27,8 +27,8 @@ class TimerUI {
       const container = document.createElement('div');
       container.classList.add('timer-change-container');
   
-      const incrementButton = createStyledButton(`+${this.timer.timerChangeAmount} Sec`, () => this.timer.increment(), true);
-      const decrementButton = createStyledButton(`-${this.timer.timerChangeAmount} Sec`, () => this.timer.decrement(), true);
+      const incrementButton = UIFactory.createStyledButton(`+${this.timer.timerChangeAmount} Sec`, () => this.timer.increment(), true);
+      const decrementButton = UIFactory.createStyledButton(`-${this.timer.timerChangeAmount} Sec`, () => this.timer.decrement(), true);
       incrementButton.style.width = '70px';
       decrementButton.style.width = '70px';
   
@@ -42,13 +42,13 @@ class TimerUI {
       const innerContainer = document.createElement('div');
       innerContainer.classList.add('timer-start-stop-container');
   
-      const startButton = createStyledButton('Start', () => this.timer.start(), false, 'startButton');
-      const stopButton = createStyledButton('Pause', () => this.timer.stop(), false, 'stopButton');
+      const startButton = UIFactory.createStyledButton('Start', () => this.timer.start(), false, 'startButton');
+      const stopButton = UIFactory.createStyledButton('Pause', () => this.timer.stop(), false, 'stopButton');
       stopButton.style.display = 'none'; // Initially hide the stop button
   
-      const resetButton = createStyledButton('Reset', () => this.timer.reset());
+      const resetButton = UIFactory.createStyledButton('Reset', () => this.timer.reset());
   
-      const setLoopDurationButton = createStyledButton('Set current time as loop duration', () => this.timer.setLoopDuration());
+      const setLoopDurationButton = UIFactory.createStyledButton('Set current time as loop duration', () => this.timer.setLoopDuration());
       setLoopDurationButton.classList.add('set-loop-duration-button');
   
       innerContainer.appendChild(startButton);

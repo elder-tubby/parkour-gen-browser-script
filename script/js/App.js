@@ -2,14 +2,16 @@ class App {
     constructor() {
         this.mainContainer = this.createMainContainer();
         this.heading = this.createMainHeading();
-        this.contentWrapper = this.createContentWrapper(); // used to separate the toggle visibility button from the rest of the UI
+
+        // used to separate the toggle visibility button from the rest of the UI:
+        this.contentWrapper = this.createContentWrapper();
         this.isCollapsed = false;
         this.init();
     }
 
     init() {
         // Fetch map groups from GitHub
-        fetchMapsStructure()
+        MapFetcher.fetchMapsStructure()
             .then(() => {
                 this.createToggleUIVisibilityButton();
                 new TypeDropdown(this.contentWrapper);
@@ -30,7 +32,7 @@ class App {
     createMainContainer() {
         const container = document.createElement('div');
         container.id = 'container';
-        makeElementDraggable(container); // Makes the container draggable
+        new DraggableElement(container); // Makes the container draggable
         return container;
     }
 
@@ -75,12 +77,12 @@ class App {
     createUIForType2() {
 
         // Create the start button for the first map
-        const startFirstMapButton = createStyledButton('Start First Map', () => {
+        const startFirstMapButton = UIFactory.createStyledButton('Start First Map', () => {
             const selectedGroup = mapGroupDropdown.value;  // Get the currently selected group
             const firstMap = listOfGroups[selectedGroup] ? listOfGroups[selectedGroup][0] : null;  // Get the first map of the selected group
 
             if (firstMap) {
-                mapData = fetchCurrentMapData(firstMap.mapId);  // Fetch and load the first map using its mapId
+                mapData = MapFetcher.fetchCurrentMapData(firstMap.mapId);  // Fetch and load the first map using its mapId
             }
         });
         startFirstMapButton.classList.add('paste-start-button');
@@ -91,8 +93,8 @@ class App {
 
     createOtherUI() {
         const pasteAndStartButton = this.createPasteAndStartButton();
-        const chatMessageToggleContainer = createCheckbox(toggleChatMessagePermission, "Chat alerts", true);
-        const keepPostionsContainer = createCheckbox(toggleKeepPostion, "Keep positions", true);
+        const chatMessageToggleContainer = UIFactory.createCheckbox(ChatManager.toggleChatPermission, "Chat alerts", true);
+        const keepPostionsContainer = UIFactory.createCheckbox(toggleKeepPostion, "Keep positions", true);
 
         this.mainContainer.appendChild(pasteAndStartButton);
         this.mainContainer.appendChild(chatMessageToggleContainer);
@@ -104,11 +106,11 @@ class App {
         type1ButtonContainer.id = 'type1-button-container';
         type1ButtonContainer.classList.add('type1-button-container');
 
-        const createMapButton = createStyledButton('Create', () => createMap());
+        const createMapButton = UIFactory.createStyledButton('Create', MapManager.createMap);
         createMapButton.classList.add('map-button');
         createMapButton.id = 'createMapButton';  // Assign an ID
 
-        const createAndStartButton = createStyledButton('Create And Start', createAndStartMap);
+        const createAndStartButton = UIFactory.createStyledButton('Create And Start', MapManager.createAndStartMap);
         createAndStartButton.classList.add('map-button');
         createAndStartButton.id = 'createAndStartButton';  // Assign an ID
 
@@ -121,9 +123,12 @@ class App {
     }
 
     createPasteAndStartButton() {
-        const button = createStyledButton('Paste Data And Start', pasteAndStart);
+        const button = UIFactory.createStyledButton('Paste Data And Start', MapManager.pasteAndStart);
         button.classList.add('paste-start-button');
 
         return button;
     }
 }
+
+new App();
+
