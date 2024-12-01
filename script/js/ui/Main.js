@@ -1,4 +1,4 @@
-class App {
+class Main {
     constructor() {
         this.mainContainer = this.createMainContainer();
         this.heading = this.createMainHeading();
@@ -8,6 +8,7 @@ class App {
         this.isCollapsed = false;
         this.init();
     }
+    
 
     init() {
         // Fetch map groups from GitHub
@@ -130,5 +131,5 @@ class App {
     }
 }
 
-new App();
+new Main();
 

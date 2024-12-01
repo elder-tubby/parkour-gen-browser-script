@@ -89,7 +89,7 @@ class TypeDropdown extends Dropdown {
         this.toggleVisibility(selectedState.type);
         selectedState.group = null;
         selectedState.mapId = null;
-        disableMapRelatedButtons(true);
+        ButtonController.disableMapCreationButtons(true);
     }
 
     toggleVisibility() {
@@ -102,7 +102,7 @@ class TypeDropdown extends Dropdown {
             this.groupsDropdown.mapDropdown.setOptions([]);  // Empty the map dropdown
         }    
 
-        toggleButtonVisibility();
+        ButtonController.updateTypeSpecificButtonsVisibility();
 
         // Get the map groups for the selected type
         const listOfGroups = mapsStructureData[selectedState.type];
@@ -154,7 +154,7 @@ class GroupDropdown extends Dropdown {
         selectedState.group = event.target.value;
         this.createMapDropdown();
         selectedState.mapId = null;
-        disableMapRelatedButtons(true);
+        ButtonController.disableMapCreationButtons(true);
     }
 
     createMapDropdown() {
@@ -195,7 +195,7 @@ class MapDropdown extends Dropdown {
     handleChange(event) {
         super.handleChange(event);
         selectedState.mapId = event.target.value;  // Update selected map
-        disableMapRelatedButtons(false);
+        ButtonController.disableMapCreationButtons(false);
     }
 
     setOptions(maps) {
