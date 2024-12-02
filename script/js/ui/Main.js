@@ -17,22 +17,22 @@ class Main {
         this.createMainHeading();
         this.createToggleUIVisibilityButton();
 
-        // Fetch map groups from GitHub
-        MapFetcher.fetchMapsStructure()
-            .then(() => {
-                this.createTypeRelatedUI();
-                new TimerUI(contentWrapper);
-                this.createOtherUI();
-            })
-            .catch(error => {
-                console.error('Error loading map structure file:', error);
-            });
+        // // Fetch map groups from GitHub
+        // MapFetcher.fetchMapsStructure()
+        //     .then(() => {
+        //         this.createTypeRelatedUI();
+        //         new TimerUI(contentWrapper);
+        //         this.createOtherUI();
+        //     })
+        //     .catch(error => {
+        //         console.error('Error loading map structure file:', error);
+        //     });
     }
 
     createMainContainer() {
         const container = document.createElement('div');
         container.id = 'container';
-        new DraggableElement(container); // Makes the container draggable
+        // new DraggableElement(container); // Makes the container draggable
         return container;
     }
 
@@ -140,6 +140,4 @@ class Main {
     }
 }
 
-window.addEventListener('load', () => {
     new Main();
-});
