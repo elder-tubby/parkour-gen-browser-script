@@ -75,8 +75,9 @@ class Dropdown {
 
 // Class to manage Type dropdown with nested Group dropdowns
 class TypeDropdown extends Dropdown {
-    constructor(container) {
+    constructor(container, typeSpecificUIManager) {
         super(Object.keys(mapsStructureData), 'Select Type', container); // Append the TypeDropdown to the container
+        this.typeSpecificUIManager = typeSpecificUIManager; // Reference to the UI manager
         this.groupsDropdown = null;
         this.container = container;
         this.createGroupDropdown();
@@ -90,6 +91,8 @@ class TypeDropdown extends Dropdown {
         selectedState.group = null;
         selectedState.mapId = null;
         ButtonController.disableMapCreationButtons(true);
+        // Notify the UI manager to show/hide UI elements based on the selected type
+        this.typeSpecificUIManager.showUIForType(selectedState.type);
     }
 
     toggleVisibility() {
@@ -100,9 +103,9 @@ class TypeDropdown extends Dropdown {
         if (this.groupsDropdown && this.groupsDropdown.mapDropdown) {
             // Clear map dropdown options when type changes
             this.groupsDropdown.mapDropdown.setOptions([]);  // Empty the map dropdown
-        }    
+        }
 
-        ButtonController.updateTypeSpecificButtonsVisibility();
+        // ButtonController.updateTypeSpecificButtonsVisibility();
 
         // Get the map groups for the selected type
         const listOfGroups = mapsStructureData[selectedState.type];

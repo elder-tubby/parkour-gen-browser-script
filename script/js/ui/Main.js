@@ -8,26 +8,30 @@ class Main {
         this.isCollapsed = false;
         this.init();
     }
-    
 
     init() {
+        this.setupUI();  
+        
+        this.mainContainer.appendChild(this.heading);
+        this.mainContainer.appendChild(this.contentWrapper);
+        document.body.appendChild(this.mainContainer);
+    }
+
+    setupUI() {
         // Fetch map groups from GitHub
         MapFetcher.fetchMapsStructure()
             .then(() => {
+                const typeSpecificUIManager = new TypeSpecificUIManager(this.contentWrapper);  
                 this.createToggleUIVisibilityButton();
-                new TypeDropdown(this.contentWrapper);
-                this.createUIForType1();
-                // this.createUIForType2();
+                new TypeDropdown(this.contentWrapper, typeSpecificUIManager);  // Pass the manager to the TypeDropdown
+                this.createUIForType1(typeSpecificUIManager);
+                // this.createUIForType2(); 
                 new TimerUI(contentWrapper);
                 this.createOtherUI();
             })
             .catch(error => {
                 console.error('Error loading map structure file:', error);
             });
-
-        this.mainContainer.appendChild(this.heading);
-        this.mainContainer.appendChild(this.contentWrapper);
-        document.body.appendChild(this.mainContainer);
     }
 
     createMainContainer() {
@@ -102,7 +106,7 @@ class Main {
         this.mainContainer.appendChild(keepPostionsContainer);
     }
 
-    createUIForType1() {
+    createUIForType1(typeSpecificUIManager) {
         const type1ButtonContainer = document.createElement('div');
         type1ButtonContainer.id = 'type1-button-container';
         type1ButtonContainer.classList.add('type1-button-container');
@@ -115,10 +119,15 @@ class Main {
         createAndStartButton.classList.add('map-button');
         createAndStartButton.id = 'createAndStartButton';  // Assign an ID
 
-        type1ButtonContainer.style.display = 'none';
-
+        type1ButtonContainer.classList.add('hidden');  // Initially hidden
         type1ButtonContainer.appendChild(createMapButton);
         type1ButtonContainer.appendChild(createAndStartButton);
+
+        typeSpecificUIManager.registerUIElements('Type 1', [type1ButtonContainer]);
+
+        // Initially hide the Type 1 button container until Type 1 is selected
+
+
 
         this.mainContainer.appendChild(type1ButtonContainer);
     }
