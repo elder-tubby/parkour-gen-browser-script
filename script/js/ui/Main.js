@@ -140,5 +140,6 @@ class Main {
     }
 }
 
-new Main();
-
+window.addEventListener('load', () => {
+    new Main();
+});
