@@ -2,7 +2,7 @@ class Main {
     constructor() {
         this.mainContainer = this.createMainContainer();
         this.contentWrapper = this.createContentWrapper();
-        this.isCollapsed = true;
+        this.isCollapsed = false;
         this.init();
     }
 
