@@ -202,7 +202,8 @@ class MapManager {
                 }
 
                 // window.bonkHost.startGame();
-                this.startGameWithBonkHostKeepPosOff();
+                MapManager.startGameWithBonkHostKeepPosOff();
+
                 window.parkourGenerator.keepPositions = tempKeepPositionsValue;
             } else {
                 NotificationManager.show('Clipboard is empty. Copy map data first.');
@@ -217,16 +218,17 @@ class MapManager {
         await MapManager.createMap();
 
         let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
-        const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
-        if (isLobbyHidden) {
-            window.parkourGenerator.keepPositions = true;
+        // const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
+        // if (isLobbyHidden) {
+            // window.parkourGenerator.keepPositions = true;
             // console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
             // console.log("isLobbyHidden: ", isLobbyHidden);
-        }
+        // }
 
-        window.bonkHost.startGame();
+        // window.bonkHost.startGame();
 
-        this.startGameWithBonkHostKeepPosOff();
+        MapManager.startGameWithBonkHostKeepPosOff();
+
         window.parkourGenerator.keepPositions = tempKeepPositionsValue;
     }
 
