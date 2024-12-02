@@ -7,8 +7,6 @@ class TypeSpecificUIManager {
     // Register UI elements for a specific type
     registerUIElements(type, elements) {
         this.typeUIElements[type] = elements;
-        console.log(`in registerUIElements. Elements: `, elements);
-
 
         // Ensure all elements start as hidden
         elements.forEach(el => el.classList.add('hidden'));
