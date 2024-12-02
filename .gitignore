@@ -1,0 +1,5 @@
+script/temp testing/temp2.js
+script/temp testing/temp1-without-class.js
+script/temp testing/temp1.js
+script/temp testing/temp.html
+script/.vscode/launch.json

@@ -47,12 +47,14 @@ style.innerHTML = `
 .timer-start-stop-container>button:nth-child(4) {
   /* margin-right: 20px; /* Adjust the spacing as needed */
   /* margin-left: 20px; */
-  
+
 }
 
 /* Main container styles */
 #container {
   position: fixed;
+  top: 50px;
+  left: 50px;
   width: 180px;
   border: 2px solid #ccc;
   border-radius: 3px;
@@ -60,7 +62,7 @@ style.innerHTML = `
   z-index: 1000;
   overflow: hidden;
   font-family: 'futurept_b1';
-  
+
 }
 
 /* Header styles */
