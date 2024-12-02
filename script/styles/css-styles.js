@@ -1,6 +1,13 @@
 // Create a new <style> element
 const style = document.createElement('style');
 style.innerHTML = `
+@font-face {
+  font-family: 'futurept_b1';
+  src: url('futurept_7a255.otf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Create Map Button */
 .create-map-button {
   width: 130px;
@@ -296,7 +303,8 @@ style.innerHTML = `
 }
 
 .set-loop-duration-button {
-  font-size: 13px;
+  font-size: 12px;
+  margin: 10px;
 }
 
 .hidden {

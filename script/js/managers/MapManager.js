@@ -217,14 +217,14 @@ class MapManager {
         await MapManager.createMap();
 
         let tempKeepPositionsValue = window.parkourGenerator.keepPositions;
-        // const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
-        // if (isLobbyHidden) {
-        //     window.parkourGenerator.keepPositions = true;
-        //     console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
-        //     console.log("isLobbyHidden: ", isLobbyHidden);
-        // }
+        const isLobbyHidden = document.getElementById('newbonklobby').style.display === 'none';
+        if (isLobbyHidden) {
+            window.parkourGenerator.keepPositions = true;
+            // console.log("parkourGenerator.keepPositions: ", window.parkourGenerator.keepPositions);
+            // console.log("isLobbyHidden: ", isLobbyHidden);
+        }
 
-        // window.bonkHost.startGame();
+        window.bonkHost.startGame();
 
         this.startGameWithBonkHostKeepPosOff();
         window.parkourGenerator.keepPositions = tempKeepPositionsValue;
@@ -265,7 +265,7 @@ class MapManager {
         MapManager.createAndStartMap();
     }
 
-    updateMapDropdown() {
+    static updateMapDropdown() {
         // Assuming the MapDropdown is the third dropdown and has a class 'map-dropdown'
         const mapDropdown = document.querySelector('.map-dropdown');
         if (mapDropdown) {
@@ -273,7 +273,7 @@ class MapManager {
         }
     }
 
-    startGameWithBonkHostKeepPosOff() {
+    static startGameWithBonkHostKeepPosOff() {
         const w = parent.frames[0];
         let tempBonkHostKeepPosValue = w.bonkHost.keepState;
         w.bonkHost.keepState = false;

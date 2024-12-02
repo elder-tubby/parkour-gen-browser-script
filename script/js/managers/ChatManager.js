@@ -4,7 +4,7 @@ class ChatManager {
     }
     static sendChatMessage(message) {
         if (!this.canSendChatMessage) return;
-        // this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
+        this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
     }
 
     static toggleChatPermission(checkBoxValue) {
