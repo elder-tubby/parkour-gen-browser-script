@@ -3,6 +3,7 @@ class Main {
         this.mainContainer = this.createMainContainer();
         this.contentWrapper = this.createContentWrapper();
         this.isCollapsed = false;
+        ChatManager.canSendChatMessage = true;
         this.init();
     }
 
@@ -102,7 +103,7 @@ class Main {
 
     createOtherUI() {
         const pasteAndStartButton = this.createPasteAndStartButton();
-        const chatMessageToggleContainer = UIFactory.createCheckbox(ChatManager.toggleChatPermission, "Chat alerts", true);
+        const chatMessageToggleContainer = UIFactory.createCheckbox(ChatManager.toggleChatPermission, "Chat alerts", ChatManager.canSendChatMessage);
         const keepPostionsContainer = UIFactory.createCheckbox(toggleKeepPostion, "Keep positions", true);
 
         this.contentWrapper.appendChild(pasteAndStartButton);

@@ -1,19 +1,19 @@
 class ChatManager {
-    constructor() {
-        this.canSendChatMessage = true;  // Instance variable
-    }
+
+    static canSendChatMessage;
+
     static sendChatMessage(message) {
-        if (!this.canSendChatMessage) return;
-        this.window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
+        if (!ChatManager.canSendChatMessage) return; // Use ChatManager instead of this
+        window.bonkHost.toolFunctions.networkEngine.chatMessage(message);
     }
 
     static toggleChatPermission(checkBoxValue) {
-        // If checkBoxValue exists, set canSendChatMessage to that value
+        console.log("cansendcgatmsg: ", ChatManager.canSendChatMessage);
         if (checkBoxValue != null) {
-            this.canSendChatMessage = checkBoxValue;
+            ChatManager.canSendChatMessage = checkBoxValue; // Use ChatManager instead of this
         } else {
-            // Otherwise, toggle the value of canSendChatMessage
-            this.canSendChatMessage = !this.canSendChatMessage;
+            ChatManager.canSendChatMessage = !ChatManager.canSendChatMessage;
         }
     }
 }
+
