@@ -50,19 +50,14 @@
 /* Main container styles */
 #container {
   position: fixed;
-  top: 50px;
-  left: 50px;
   width: 180px;
-  background-color: #cfd8cd;
   border: 2px solid #ccc;
   border-radius: 3px;
-  padding: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow: hidden;
-  /* Start with overflow hidden */
   font-family: futurept_b1;
-  transition: width 0.3s, height 0.3s;
+  
 }
 
 /* Header styles */
@@ -301,4 +296,16 @@
 
 .hidden {
   display: none;
+}
+
+/* Main container styles */
+#contentWrapper {
+  position: relative;
+  width: 180px;
+  background-color: #cfd8cd;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  padding: 0px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }

@@ -1,31 +1,26 @@
 class Main {
     constructor() {
         this.mainContainer = this.createMainContainer();
-        this.heading = this.createMainHeading();
-
-        // used to separate the toggle visibility button from the rest of the UI:
         this.contentWrapper = this.createContentWrapper();
-        this.isCollapsed = false;
+        this.isCollapsed = true;
         this.init();
     }
 
     init() {
-        this.setupUI();  
-        
-        this.mainContainer.appendChild(this.heading);
+        this.setupUI();
         this.mainContainer.appendChild(this.contentWrapper);
         document.body.appendChild(this.mainContainer);
     }
 
     setupUI() {
+
+        this.createMainHeading();
+        this.createToggleUIVisibilityButton();
+
         // Fetch map groups from GitHub
         MapFetcher.fetchMapsStructure()
             .then(() => {
-                const typeSpecificUIManager = new TypeSpecificUIManager(this.contentWrapper);  
-                this.createToggleUIVisibilityButton();
-                new TypeDropdown(this.contentWrapper, typeSpecificUIManager);  // Pass the manager to the TypeDropdown
-                this.createUIForType1(typeSpecificUIManager);
-                // this.createUIForType2(); 
+                this.createTypeRelatedUI();
                 new TimerUI(contentWrapper);
                 this.createOtherUI();
             })
@@ -45,7 +40,7 @@ class Main {
         const heading = document.createElement('div');
         heading.innerText = 'Parkour Generator';
         heading.classList.add('header');
-        return heading;
+        this.mainContainer.appendChild(heading);
     }
 
     createContentWrapper() {
@@ -55,28 +50,37 @@ class Main {
         return contentWrapper;
     }
 
+    createTypeRelatedUI() {
+        const typeSpecificUIManager = new TypeSpecificUIManager(this.contentWrapper);
+        new TypeDropdown(this.contentWrapper, typeSpecificUIManager);  // Pass the manager to the TypeDropdown
+        this.createUIForType1(typeSpecificUIManager);
+        // this.createUIForType2(); 
+    }
+
     createToggleUIVisibilityButton() {
         const toggleButton = document.createElement('button');
         toggleButton.innerHTML = '-'; // Start with a "-" icon
         toggleButton.classList.add('toggle-button');
 
         toggleButton.addEventListener('click', () => {
-            if (!this.isCollapsed) {
-                // Collapse the container
-                this.contentWrapper.style.display = 'none';
-                this.mainContainer.style.height = '40px'; // Shrink to just show the toggle button
-                this.mainContainer.style.overflow = 'hidden'; // Hide scrollbars when collapsed
-                toggleButton.innerHTML = '+'; // Change to "+" when collapsed
-            } else {
-                // Expand the container
-                this.contentWrapper.style.display = 'block';
-                this.mainContainer.style.height = ''; // Auto height based on content
-                toggleButton.innerHTML = '-'; // Change to "-" when expanded
-            }
-            this.isCollapsed = !this.isCollapsed;
+            this.toggleUIVisibility(toggleButton);
         });
 
-        this.mainContainer.appendChild(toggleButton); // Append toggle button to the container
+        this.mainContainer.appendChild(toggleButton);
+
+        this.toggleUIVisibility(toggleButton);
+
+    }
+
+    toggleUIVisibility(toggleButton) {
+        if (this.isCollapsed) {
+            this.contentWrapper.style.display = 'none';
+            toggleButton.innerHTML = '+';
+        } else {
+            this.contentWrapper.style.display = 'block';
+            toggleButton.innerHTML = '-';
+        }
+        this.isCollapsed = !this.isCollapsed;
     }
 
     createUIForType2() {
@@ -101,9 +105,9 @@ class Main {
         const chatMessageToggleContainer = UIFactory.createCheckbox(ChatManager.toggleChatPermission, "Chat alerts", true);
         const keepPostionsContainer = UIFactory.createCheckbox(toggleKeepPostion, "Keep positions", true);
 
-        this.mainContainer.appendChild(pasteAndStartButton);
-        this.mainContainer.appendChild(chatMessageToggleContainer);
-        this.mainContainer.appendChild(keepPostionsContainer);
+        this.contentWrapper.appendChild(pasteAndStartButton);
+        this.contentWrapper.appendChild(chatMessageToggleContainer);
+        this.contentWrapper.appendChild(keepPostionsContainer);
     }
 
     createUIForType1(typeSpecificUIManager) {
@@ -125,11 +129,7 @@ class Main {
 
         typeSpecificUIManager.registerUIElements('Type 1', [type1ButtonContainer]);
 
-        // Initially hide the Type 1 button container until Type 1 is selected
-
-
-
-        this.mainContainer.appendChild(type1ButtonContainer);
+        this.contentWrapper.appendChild(type1ButtonContainer);
     }
 
     createPasteAndStartButton() {
