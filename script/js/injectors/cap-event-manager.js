@@ -154,7 +154,7 @@ window.bonkCodeInjectors.push((bonkCode) => {
 
 window.bonkAPI.events.addEventListener("capZoneEvent", function (data) {
     const { capID, playerID, currentFrame } = data;
-    // console.log(`Player ${playerID} touched the cap zone ${capID} at frame ${currentFrame}`);
+    console.log(`Player ${playerID} touched the cap zone ${capID} at frame ${currentFrame}`);
 });
 
 
