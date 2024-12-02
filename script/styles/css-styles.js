@@ -1,6 +1,17 @@
 // Create a new <style> element
 const style = document.createElement('style');
 style.innerHTML = `
+/* Container styles */
+.container {
+  display: flex;
+  flex-direction: column;
+  /* Stack buttons vertically */
+  align-items: center;
+  /* Center items horizontally */
+  padding: 5px;
+  /* Optional padding for better spacing */
+}
+
 /* Create Map Button */
 .create-map-button {
   width: 130px;
@@ -27,12 +38,6 @@ style.innerHTML = `
 }
 
 
-
-.visible {
-  display: flex;
-}
-
-
 .timer-start-stop-container>button:nth-child(1),
 .timer-start-stop-container>button:nth-child(2) {
   width: 70px;
@@ -47,20 +52,25 @@ style.innerHTML = `
 .timer-start-stop-container>button:nth-child(4) {
   /* margin-right: 20px; /* Adjust the spacing as needed */
   /* margin-left: 20px; */
-  
+  */
 }
 
 /* Main container styles */
-#container {
+#mainUIPanel {
   position: fixed;
+  top: 50px;
+  left: 50px;
   width: 180px;
+  background-color: #cfd8cd;
   border: 2px solid #ccc;
   border-radius: 3px;
+  padding: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow: hidden;
+  /* Start with overflow hidden */
   font-family: futurept_b1;
-  
+  transition: width 0.3s, height 0.3s;
 }
 
 /* Header styles */
@@ -295,22 +305,6 @@ style.innerHTML = `
 
 .set-loop-duration-button {
   font-size: 13px;
-}
-
-.hidden {
-  display: none;
-}
-
-/* Main container styles */
-#contentWrapper {
-  position: relative;
-  width: 180px;
-  background-color: #cfd8cd;
-  border: 2px solid #ccc;
-  border-radius: 3px;
-  padding: 0px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
 }
 `;
 
