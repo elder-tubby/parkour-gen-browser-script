@@ -1,7 +1,7 @@
 {
   "spawn": {
-    "spawnX": -12,
-    "spawnY": -36
+    "spawnX": 343,
+    "spawnY": -163
   },
   "mapSize": 9,
   "lines": [
