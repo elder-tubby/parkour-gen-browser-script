@@ -1,30 +1,7 @@
 {
   "Type 1": {
     "Group 1": [
-      {
-        "mapId": "map1",
-        "mapName": "Parkour Map 1"
-      },
-      {
-        "mapId": "map2",
-        "mapName": "Parkour Map 2"
-      },
-	   {
-        "mapId": "map3",
-        "mapName": "Parkour Map 3"
-      },
-      {
-        "mapId": "map7",
-        "mapName": "Parkour Map 7"
-      },
-      {
-        "mapId": "map8",
-        "mapName": "Parkour Map 8"
-      },
-      {
-        "mapId": "map9",
-        "mapName": "Parkour Map 9"
-      }
+     
     ],
     "Group 2": [
      {
@@ -58,7 +35,32 @@
       {
         "mapId": "map5",
         "mapName": "Parkour Map 5"
+      },
+	   {
+        "mapId": "map1",
+        "mapName": "Parkour Map 1"
+      },
+      {
+        "mapId": "map2",
+        "mapName": "Parkour Map 2"
+      },
+	   {
+        "mapId": "map3",
+        "mapName": "Parkour Map 3"
+      },
+      {
+        "mapId": "map7",
+        "mapName": "Parkour Map 7"
+      },
+      {
+        "mapId": "map8",
+        "mapName": "Parkour Map 8"
+      },
+      {
+        "mapId": "map9",
+        "mapName": "Parkour Map 9"
       }
+	  
     ],
     "Group 3": [
       {
