@@ -27,7 +27,14 @@
       }
     ],
     "Group 2": [
-     
+     {
+        "mapId": "map14_1",
+        "mapName": "Parkour Map 14.1"
+      },
+      {
+        "mapId": "map14_2",
+        "mapName": "Parkour Map 14.2"
+      }
     ],
     "Group 3": [
       {
