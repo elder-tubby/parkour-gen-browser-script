@@ -6,7 +6,7 @@
   "mapSize": 9,
   "lines": [
     {
-      "color": 10537917,
+      "color": 9221290,
       "bounciness": -1,
       "isOnlyForProgram": false,
       "friction": 0,
@@ -1405,7 +1405,7 @@
       "width": 16.275719,
       "isNoJump": false,
       "isFrame": false,
-      "y": 434,
+      "y": 399,
       "angle": 180,
       "isFloor": false,
       "id": 66,
