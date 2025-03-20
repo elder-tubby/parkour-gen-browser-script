@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.3
 // @description  Converts elder-tubby's parkour generator data to bonk.io maps. Contains a modified version of Clarifi's pkrUtils. Records and outputs player position. Requires 'BonkLIB' mod.
-// @author       eldertubby + Salama + Clairfi
+// @author       eldertubby + Salama + Clarifi
 // @license      MIT
 // @match        https://bonkisback.io/gameframe-release.html
 // @match        https://bonk.io/gameframe-release.html
