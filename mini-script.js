@@ -1,293 +1,370 @@
 // ==UserScript==
-// @name         Parkour Generator (Mini)
-// @namespace    https://github.com/elder-tubby/parkour-gen-browser-script/blob/main/mini-script-loader.js
-// @version      0.9
-// @description  Mini version of script to convert elder-tubby's parkour generator data to bonk.io maps.
-// @author       eldertubby + Salama
+// @name         parkourGenerator
+// @namespace    http://tampermonkey.net/
+// @version      0.3
+// @description  Converts elder-tubby's parkour generator data to bonk.io maps. Contains a modified version of Clarifi's pkrUtils. Records and outputs player position. Requires 'BonkLIB' mod.
+// @author       eldertubby + Salama + Clairfi
+// @license      MIT
 // @match        https://bonkisback.io/gameframe-release.html
 // @match        https://bonk.io/gameframe-release.html
+// @run-at       document-end
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/mini-script.js
 // @downloadURL  https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/mini-script.js
 // ==/UserScript==
 
+window.posRecorder = {}; // Namespace for encapsulating the UI functions and variables
 
-// Create a new <style> element
-const style = document.createElement('style');
-style.innerHTML = `
-    /* Container styles */
-    .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 5px;
-    }
+// Use 'strict' mode for safer code by managing silent errors
+'use strict';
 
-    #mainUIPanel {
-        position: fixed;
-        top: 50px;
-        left: 50px;
-        width: 180px;
-        background-color: #cfd8cd;
-        border: 2px solid #ccc;
-        border-radius: 3px;
-        padding: 0px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-
-        overflow: hidden;
-        font-family: futurept_b1;
-        transition: width 0.3s, height 0.3s;
-            align-items: center; /* Center contents horizontally */
-    justify-content: center; /* Ensure vertical centering if needed */
-
-    }
-
-    .header {
-        background-color: #009688;
-        color: white;
-        font-size: 17px;
-        padding: 5px;
-        padding-left: 25px;
-        border-radius: 3px 3px 0 0;
-        text-align: left;
-        width: calc(100% + 30px);
-        margin-left: 0px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    .toggle-button {
-        position: absolute;
-        right: 3px;
-        top: 3.5px;
-        width: 25px;
-        height: 25px;
-        border-radius: 3px;
-        background-color: #80544c;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 15px;
-        line-height: 30px;
-    }
-
-    .styled-button {
-        font-family: 'futurept_b1';
-        background-color: #80544c;
-        color: white;
-        font-size: 14px;
-        border: none;
-        padding: 5px;
-        margin: 5px;
-        cursor: pointer;
-        border-radius: 3px;
-    }
-
-    .styled-button:disabled {
-        background-color: grey;
-        cursor: not-allowed;
-    }
-
-    .notification {
-        position: fixed;
-        font-family: 'futurept_b1';
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #009688;
-        color: white;
-        padding: 10px;
-        border-radius: 3px;
-        z-index: 1000;
-        display: none;
-    }
-        .paste-start-button {
-  display: flex;
-  width: 142px;
-  margin: 0 auto;
-  margin-top: 5px;
-  margin-bottom: 4px;
-  text-align: center;
-  justify-content: center; /* Center the text horizontally */
-  align-items: center; /* Center the text vertically */
-}
-
-`;
-
-document.head.appendChild(style);
-
-function createContainer() {
-    const container = document.createElement('div');
-    container.id = 'mainUIPanel';
-    makeElementDraggable(container);
-    return container;
-}
-
-function createHeading() {
-    const heading = document.createElement('div');
-    heading.innerText = 'Parkour Generator';
-    heading.classList.add('header');
-    return heading;
-}
-
-function createContentWrapper() {
-    const contentWrapper = document.createElement('div');
-    contentWrapper.id = 'contentWrapper';
-    contentWrapper.style.display = 'block'; // Default to visible
-    return contentWrapper;
-}
-
-function createToggleButton(container, contentWrapper) {
-    const toggleButton = document.createElement('button');
-    toggleButton.innerHTML = '-';
-    toggleButton.classList.add('toggle-button');
-
-    let isCollapsed = false;
-
-    toggleButton.addEventListener('click', () => {
-        if (!isCollapsed) {
-            contentWrapper.style.display = 'none';
-            container.style.height = '30px';
-            container.style.overflow = 'hidden';
-            toggleButton.innerHTML = '+';
-        } else {
-
-            contentWrapper.style.display = 'block';
-            container.style.height = '';
-            toggleButton.innerHTML = '-';
-          }
-        isCollapsed = !isCollapsed;
-    });
-
-    container.appendChild(toggleButton);
-}
-
-function createMainUI() {
-    const container = createContainer();
-    const heading = createHeading();
-    const contentWrapper = createContentWrapper();
-
-    container.appendChild(heading);
-    container.appendChild(contentWrapper);
-    const groupURL = 'https://raw.githubusercontent.com/elder-tubby/parkour-generator-browser-script/refs/heads/main/map-data/groups.json';
-    createToggleButton(container, contentWrapper);
-
-    const pasteAndStartButton = createStyledButton(
-        'Paste Data And Start',
-        async function () {
-            try {
-                const text = await navigator.clipboard.readText();
-                if (text.trim()) {
-                    showNotification('Map generated successfully! Starting the map...');
-                    createAndSetMap(text);
-                    if (
-                        document.getElementById('newbonklobby').style.display === 'none'
-                    ) {
-                        window.parkourGenerator.keepPositions = false;
-                    }
-                    window.bonkHost.startGame();
-                } else {
-                    showNotification('Clipboard is empty. Copy map data first.');
-                }
-            } catch (err) {
-                console.error('Failed to read clipboard contents: ', err);
-                showNotification('Failed to read clipboard.');
-            }
-        }
-    );
-    pasteAndStartButton.classList.add('paste-start-button');
-    container.appendChild(pasteAndStartButton);
-
-    document.body.appendChild(container);
-    return container;
-}
-
-function makeElementDraggable(element) {
-    let posX = 0,
-        posY = 0,
-        mouseX = 0,
-        mouseY = 0,
-        isResizing = false;
-
-    element.addEventListener('mousedown', function (e) {
-
-        if (e.target.tagName === 'SELECT' || e.target.closest('select')) {
-            return; // Don't start drag if clicking on a dropdown
-        }
-        if (isNearResizeArea(e, element)) {
-            isResizing = true;
-            return;
-        }
-        isResizing = false;
-        e.preventDefault();
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-    });
-
-    function elementDrag(e) {
-        if (isResizing) return;
-
-        e.preventDefault();
-        posX = mouseX - e.clientX;
-        posY = mouseY - e.clientY;
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        element.style.top = element.offsetTop - posY + 'px';
-        element.style.left = element.offsetLeft - posX + 'px';
-    }
-
-    function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-    }
-
-    function isNearResizeArea(e, element) {
-        const rect = element.getBoundingClientRect();
-        const offset = 20;
-        return e.clientX > rect.right - offset && e.clientY > rect.bottom - offset;
-    }
-}
-function createStyledButton(text, onClick) {
-    const button = document.createElement('button');
-    button.innerHTML = text;
-    button.classList.add('styled-button'); // Add the CSS class
-    button.addEventListener('click', e => {
-
-        onClick(); // Call the provided onClick function if active
-    });
-    return button;
-}
-
-function createNotificationElement() {
-    const notification = document.createElement('div');
-    notification.classList.add('notification'); // Add the CSS class
-    document.body.appendChild(notification);
-    return notification;
-}
-
-function showNotification(message, duration = 3000) {
-    const notificationElement = createNotificationElement();
-    notificationElement.textContent = message;
-    notificationElement.style.display = 'block';
-    setTimeout(() => {
-        notificationElement.style.display = 'none';
-    }, duration);
-}
-
-if (document.getElementById('mainUIPanel')) {
-    console.log('UI already exists, skipping creation.');
-    // return;
-}
-
-
+posRecorder.windowConfigs = {
+    windowName: "Parkour Generator",
+    windowId: "parkour_generator_window",
+    modVersion: "0.3",
+    bonkLIBVersion: "1.1.3",
+    bonkVersion: "49",
+};
 window.parkourGenerator = {
     keepPositions: false,
 };
 
-function createAndSetMap(red) {
+posRecorder.currentData = {};
+posRecorder.scale = 1;
+posRecorder.currentPlayerID = 0;
+posRecorder.positionData = [];
+posRecorder.isRecording = false;
+posRecorder.recordingIntervalId = null;
+posRecorder.inputState = null;
+
+// Event listener function to change the player selected in the player selector
+posRecorder.select_player = () => {
+    let player_selector = document.getElementById("posRecorder_player_selector");
+    let player_id = player_selector.options[player_selector.selectedIndex].value;
+    posRecorder.currentPlayerID = player_id;
+    //console.log("current Player ID: " + player_id);
+};
+
+// Create a new option in the player selector
+posRecorder.create_option = (userID) => {
+    //console.log("userID:" + userID);
+    let playerName = bonkAPI.getPlayerNameByID(userID);
+    let player_selector = document.getElementById("posRecorder_player_selector");
+    let newOption = document.createElement("option");
+    newOption.innerText = playerName;
+    newOption.value = userID;
+    newOption.id = "selector_option_" + userID;
+    player_selector.appendChild(newOption);
+    //console.log("selector_option_" + userID + " added to player_selector");
+};
+
+// Remove an option from the player selector
+posRecorder.remove_option = (userID) => {
+    let player_selector = document.getElementById("posRecorder_player_selector");
+    let option = document.getElementById("selector_option_" + userID);
+    player_selector.removeChild(option);
+};
+
+// Reset the player selector to the default state
+posRecorder.reset_selector = () => {
+    // Remove all options except the default one
+    let player_selector = document.getElementById("posRecorder_player_selector");
+    Array.from(player_selector.options).forEach((option) => {
+        if (option.id !== "posRecorder_selector_option_user") {
+            player_selector.removeChild(option);
+        }
+        // Reset the current player ID
+        posRecorder.currentPlayerID = bonkAPI.getMyID();
+        // Set the selector to the first option as default
+        player_selector.selectedIndex = bonkAPI.getMyID();
+    });
+};
+
+// Update the player list in the player selector
+posRecorder.update_players = () => {
+    // Get the list of players and the current player ID
+    let playerList = bonkAPI.getPlayerList();
+    let myID = bonkAPI.getMyID();
+    // Reset the player selector
+    posRecorder.reset_selector();
+    // Add all player to the player selector
+    playerList.forEach((player, id) => {
+        if (player && id !== myID) {
+            posRecorder.create_option(id);
+        }
+    });
+};
+
+
+bonkAPI.addEventListener('gameStart', (e) => {
     try {
+        posRecorder.scale = e.mapData.physics.ppm;
+    } catch(er) {console.log(er)}
+});
+
+
+// Event listener for when a user joins the game
+bonkAPI.addEventListener("userJoin", (e) => {
+    //console.log("User join event received", e);
+    //console.log("User ID", e.userID);
+    // Add the player to the player selector
+    posRecorder.create_option(e.userID);
+});
+
+// Event listener for when a user leaves the game
+bonkAPI.addEventListener("userLeave", (e) => {
+    //console.log("User Leave event received", e);
+    //console.log("User ID", e.userID);
+    // Remove the player from the player selector
+    let playerName = bonkAPI.getPlayerNameByID(e.userID);
+    let player_selector = document.getElementById("posRecorder_player_selector");
+    // If the player is the current player, set the current player to 0 and reset the selector
+    if (player_selector.options[player_selector.selectedIndex].value === playerName) {
+        posRecorder.currentPlayerID = bonkAPI.getMyID();
+        // Set the selector to the first option as default
+        player_selector.selectedIndex = 0;
+    }
+
+    posRecorder.remove_option(e.userID);
+});
+
+// Event listener for when user(mod user) creates a room
+bonkAPI.addEventListener("createRoom", (e) => {
+    //console.log("create Room event received", e);
+    //console.log("User ID", e);
+    // Set the player name in the player selector to the current user
+    let option = document.getElementById("posRecorder_selector_option_user");
+    let playerName = bonkAPI.getPlayerNameByID(e.userID);
+    option.innerText = playerName;
+    option.value = e.userID;
+    posRecorder.currentPlayerID = e.userID;
+    // Reset the player selector to the default state
+    posRecorder.reset_selector();
+});
+
+// Event listener for when user(mod user) joins a room
+bonkAPI.addEventListener("joinRoom", (e) => {
+    //console.log("on Join event received", e);
+    //console.log("User ID", e.userID);
+    // Set the player name in the player selector to the current user
+    let option = document.getElementById("posRecorder_selector_option_user");
+    let playerName = bonkAPI.getPlayerNameByID(bonkAPI.getMyID());
+    option.innerText = playerName;
+    option.value = bonkAPI.getMyID();
+    posRecorder.currentPlayerID = bonkAPI.getMyID();
+    // Update the player list in the player selector
+    posRecorder.update_players();
+});
+
+
+const startRecording = (e) => {
+
+
+    try {
+
+        posRecorder.recordingIntervalId = setInterval(() => {
+
+            // posRecorder.inputState = e.inputState;
+            posRecorder.currentData = posRecorder.inputState.discs[posRecorder.currentPlayerID];
+
+            let currentX = window.posRecorder.currentData.x * posRecorder.scale - 365;
+            let currentY = window.posRecorder.currentData.y * posRecorder.scale - 250;
+
+            if (currentX !== undefined && currentY !== undefined) {
+                // Round the positions to 2 decimal points
+                currentX = currentX.toFixed(2);
+                currentY = currentY.toFixed(2);
+
+                posRecorder.positionData.push({ x: parseFloat(currentX), y: parseFloat(currentY) });
+                // console.log("In interval");
+                // console.log("posData inside interval: ", posRecorder.positionData);
+            }
+        }, 10); // 100ms
+
+    } catch (err) {
+        console.error("Error during position recording:", err);
+
+    }
+};
+
+bonkAPI.addEventListener("stepEvent", (e) => {
+    if (posRecorder.isRecording) {
+        posRecorder.inputState = e.inputState;
+
+        if (!posRecorder.recordingIntervalId) {
+            startRecording(e);
+        } else {
+            console.log("Recording is already in progress...");
+        }
+
+    }
+});
+
+// Function to stop recording positions
+const stopRecording = () => {
+    // console.log("posData in stopRec: ", posRecorder.positionData);
+
+    posRecorder.isRecording = false;
+    copyPositionData();
+    clearInterval(posRecorder.recordingIntervalId);
+    posRecorder.recordingIntervalId = null;
+
+    console.log("Recording stopped.");
+};
+
+function removeDuplicates(positionData) {
+    return positionData.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+            t.x === value.x && t.y === value.y
+        ))
+    );
+}
+
+// Function to copy position data to clipboard
+const copyPositionData = () => {
+    posRecorder.positionData = removeDuplicates(posRecorder.positionData);
+    if (posRecorder.positionData && posRecorder.positionData.length > 0) {
+        // Convert position data to JSON string
+        const positionDataJson = JSON.stringify(posRecorder.positionData, null, 2);
+
+        const textarea = document.createElement("textarea");
+        textarea.value = positionDataJson;
+        document.body.appendChild(textarea);
+
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        console.log("Position data copied to clipboard!");
+
+    } else {
+        console.log("No position data to copy.");
+        // alert("No position data to copy!");
+    }
+};
+
+const addPkrDiv = () => {
+    // Create the key table
+    let pkrDiv = document.createElement("div");
+    pkrDiv.innerHTML = `
+        <div class="bonkhud-settings-row">
+            <select id="posRecorder_player_selector">
+                <option id="posRecorder_selector_option_user">......</option>
+            </select>
+        </div>
+        <div class="bonkhud-settings-row">
+            <div id="recordButtonContainer"></div>
+            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 1)</div>
+        </div>
+        <div class="bonkhud-settings-row">
+            <div id="pasteButtonContainer"></div>
+            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 5)</div>
+        </div>
+    `;
+
+    // Create the window before trying to append the button
+    let pkrIndex = bonkHUD.createWindow(
+        posRecorder.windowConfigs.windowName,
+        pkrDiv,
+        posRecorder.windowConfigs
+    );
+
+    bonkHUD.loadUISetting(pkrIndex);
+
+    // Now that pkrDiv is in the DOM, find the container and append the buttons
+    let recordButton = bonkHUD.generateButton("Start Recording");
+    recordButton.style.marginBottom = "5px";
+    recordButton.style.height = "25px";
+    recordButton.id = "startRecordingButton";
+
+    let recordButtonContainer = document.getElementById("recordButtonContainer");
+    recordButtonContainer.appendChild(recordButton);
+
+    let pasteButton = bonkHUD.generateButton("Paste Data and Start");
+    pasteButton.style.marginBottom = "5px";
+    pasteButton.style.height = "25px";
+    pasteButton.id = "pasteDataStartButton";
+
+    let pasteButtonContainer = document.getElementById("pasteButtonContainer");
+    pasteButtonContainer.appendChild(pasteButton);
+
+    // Function to toggle recording
+    const toggleRecording = () => {
+        if (!posRecorder.isRecording && bonkAPI.isInGame()) {
+            posRecorder.isRecording = true;
+            posRecorder.positionData = [];
+            console.log("Recording started...");
+            recordButton.textContent = "Stop and copy";
+            recordButton.style.backgroundColor = "#4d0004";
+        } else if (posRecorder.isRecording) {
+            stopRecording();
+            recordButton.textContent = "Start Recording";
+            recordButton.style.backgroundColor = "#0B161C";
+        }
+    };
+
+    recordButton.addEventListener("click", toggleRecording);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.altKey && event.code === "Digit1") {
+            toggleRecording();
+        }
+    });
+
+        document.addEventListener("keydown", (event) => {
+        if (event.altKey && event.code === "Digit5") {
+            pasteAndStart();
+        }
+    });
+
+    // Function to handle pasting data and starting the game
+    const pasteAndStart = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text.trim()) {
+                await createAndSetMap(text);
+                if (document.getElementById("newbonklobby").style.display === "none") {
+                    window.parkourGenerator.keepPositions = false;
+                }
+                window.bonkHost.startGame();
+            } else {
+                showNotification("Clipboard is empty. Copy map data first.");
+            }
+        } catch (err) {
+            console.error("Failed to read clipboard contents: ", err);
+            showNotification("Failed to read clipboard.");
+        }
+    };
+
+    pasteButton.addEventListener("click", pasteAndStart);
+};
+
+
+async function fetchRandomMapAndAuthorNames() {
+        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/mapAndAuthorNames.json?t=${Math.random() * 1000000}`;
+
+        try {
+            const response = await fetch(url);
+            const mapAndAuthorNames = await response.json();
+
+            // Get a random key from the map
+            const keys = Object.keys(mapAndAuthorNames);
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+            return {
+                key: randomKey,
+                value: mapAndAuthorNames[randomKey]
+            };
+        } catch (error) {
+            console.error('Error fetching the JSON file:', error);
+            return null; // Return null if an error occurs
+        }
+    }
+
+async function createAndSetMap(inputText) {
+    try {
+        const randomMapAndAuthor = await fetchRandomMapAndAuthorNames();
+
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
         let map = w.bonkHost.bigClass.mergeIntoNewMap(
@@ -296,10 +373,10 @@ function createAndSetMap(red) {
         // Parse the JSON input
         let inputData;
         try {
-            if (typeof red === 'string') {
-                inputData = JSON.parse(red);
+            if (typeof inputText === 'string') {
+                inputData = JSON.parse(inputText);
             } else {
-                inputData = red; // If it's already an object, just use it
+                inputData = inputText; // If it's already an object, just use it
             }
         } catch (error) {
             console.error('Error parsing JSON:', error);
@@ -308,13 +385,18 @@ function createAndSetMap(red) {
         const spawnX = inputData.spawn.spawnX;
         const spawnY = inputData.spawn.spawnY;
 
-        const mapSize = inputData.mapSize !== undefined ? inputData.mapSize : 9;
+        const mapSize = getProcessedMapSize(inputData);
 
         map.m.a =
             w.bonkHost.players[
                 w.bonkHost.toolFunctions.networkEngine.getLSID()
             ].userName;
         map.m.n = 'Generated Parkour';
+
+        if (randomMapAndAuthor) {
+            map.m.n = randomMapAndAuthor.key;  // Assign the random key to map.m.n
+            map.m.a = randomMapAndAuthor.value; // Assign the random value to map.m.a
+        }
 
         // Set up shapes from the input data
         map.physics.shapes = inputData.lines.map(r => {
@@ -432,11 +514,28 @@ function createAndSetMap(red) {
     }
 }
 
-
 ('use strict');
 
+function transformMapSize(mapSize) {
+const mapSizeMapping = {
+    1: 30,  2: 24,  3: 20,  4: 17,  5: 15,  6: 13,
+    7: 12,  8: 10,  9: 9,   10: 8,  11: 7,  12: 6,  13: 5
+};
 
-createMainUI();
+    return mapSizeMapping[Math.floor(mapSize)] || 9; // Default to 9 if no match
+}
+
+function getProcessedMapSize(inputData) {
+    if (!inputData.version) {
+        // No version present, return mapSize as is
+        return inputData.mapSize !== undefined ? inputData.mapSize : 9;
+    }
+
+    // If version exists, transform the mapSize
+    return transformMapSize(inputData.mapSize);
+}
+
+
 
 
 let injector = str => {
@@ -495,6 +594,8 @@ let injector = str => {
     return newStr;
 };
 
+
+
 if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
 window.bonkCodeInjectors.push(bonkCode => {
     try {
@@ -506,4 +607,19 @@ window.bonkCodeInjectors.push(bonkCode => {
 });
 
 
+// Initialization logic to set up the UI once the document is ready
+const init = () => {
+    addPkrDiv();
+    let playerSelector = document.getElementById("posRecorder_player_selector");
+    if (playerSelector) {
+        playerSelector.addEventListener("change", posRecorder.select_player);
+    } else {
+        console.error("posRecorder_player_selector element not found!");
+    }
+};
 
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    init();
+} else {
+    document.addEventListener("DOMContentLoaded", init);
+}
