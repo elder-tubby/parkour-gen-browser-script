@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         parkourGenerator
+// @name         pkrGenerator
 // @namespace    http://tampermonkey.net/
 // @version      0.3
 // @description  Converts elder-tubby's parkour generator data to bonk.io maps. Contains a modified version of Clarifi's pkrUtils. Records and outputs player position. Requires 'BonkLIB' mod.
@@ -19,7 +19,7 @@ window.posRecorder = {}; // Namespace for encapsulating the UI functions and var
 'use strict';
 
 posRecorder.windowConfigs = {
-    windowName: "Parkour Generator",
+    windowName: "pkrGenerator",
     windowId: "parkour_generator_window",
     modVersion: "0.3",
     bonkLIBVersion: "1.1.3",
@@ -95,13 +95,13 @@ posRecorder.update_players = () => {
     });
 };
 
-
 bonkAPI.addEventListener('gameStart', (e) => {
     try {
         posRecorder.scale = e.mapData.physics.ppm;
-    } catch(er) {console.log(er)}
+    } catch (er) {
+        console.log(er)
+    }
 });
-
 
 // Event listener for when a user joins the game
 bonkAPI.addEventListener("userJoin", (e) => {
@@ -156,9 +156,7 @@ bonkAPI.addEventListener("joinRoom", (e) => {
     posRecorder.update_players();
 });
 
-
 const startRecording = (e) => {
-
 
     try {
 
@@ -175,7 +173,10 @@ const startRecording = (e) => {
                 currentX = currentX.toFixed(2);
                 currentY = currentY.toFixed(2);
 
-                posRecorder.positionData.push({ x: parseFloat(currentX), y: parseFloat(currentY) });
+                posRecorder.positionData.push({
+                    x: parseFloat(currentX),
+                    y: parseFloat(currentY)
+                });
                 // console.log("In interval");
                 // console.log("posData inside interval: ", posRecorder.positionData);
             }
@@ -200,6 +201,36 @@ bonkAPI.addEventListener("stepEvent", (e) => {
     }
 });
 
+posRecorder.xVel = null;
+posRecorder.yVel = null;
+posRecorder.isListeningToVelocity = false;
+bonkAPI.addEventListener("stepEvent", (e) => {
+    // Check if posRecorder and its necessary properties exist
+
+    if (posRecorder.isListeningToVelocity) {
+
+        posRecorder.inputState = e.inputState;
+        posRecorder.currentData = posRecorder.inputState.discs[bonkAPI.getMyID()];
+
+
+        // Null check for posRecorder.currentData and posRecorder.scale
+        if (posRecorder.currentData && typeof posRecorder.currentData.xv !== 'undefined' && typeof posRecorder.currentData.yv !== 'undefined' && typeof posRecorder.scale !== 'undefined') {
+            // Safely assign the velocity values after null checks
+            posRecorder.xVel = posRecorder.currentData.xv * posRecorder.scale;
+            posRecorder.yVel = posRecorder.currentData.yv * posRecorder.scale;
+
+            // console.log(`xVel: ${posRecorder.xVel}, yVel: ${posRecorder.yVel}`);
+
+        } else {
+            console.warn('posRecorder.currentData or posRecorder.scale is null or undefined');
+        }
+    }
+
+});
+
+
+
+
 // Function to stop recording positions
 const stopRecording = () => {
     // console.log("posData in stopRec: ", posRecorder.positionData);
@@ -214,10 +245,8 @@ const stopRecording = () => {
 
 function removeDuplicates(positionData) {
     return positionData.filter((value, index, self) =>
-        index === self.findIndex((t) => (
-            t.x === value.x && t.y === value.y
-        ))
-    );
+                               index === self.findIndex((t) => (
+        t.x === value.x && t.y === value.y)));
 }
 
 // Function to copy position data to clipboard
@@ -247,6 +276,10 @@ const addPkrDiv = () => {
     // Create the key table
     let pkrDiv = document.createElement("div");
     pkrDiv.innerHTML = `
+    <div class="bonkhud-settings-row">
+            <div id="pasteButtonContainer"></div>
+            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 1)</div>
+        </div>
         <div class="bonkhud-settings-row">
             <select id="posRecorder_player_selector">
                 <option id="posRecorder_selector_option_user">......</option>
@@ -254,20 +287,20 @@ const addPkrDiv = () => {
         </div>
         <div class="bonkhud-settings-row">
             <div id="recordButtonContainer"></div>
-            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 1)</div>
+            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 3)</div>
         </div>
         <div class="bonkhud-settings-row">
-            <div id="pasteButtonContainer"></div>
+            <div id="copyMapButtonContainer"></div>
             <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 5)</div>
         </div>
+
     `;
 
     // Create the window before trying to append the button
     let pkrIndex = bonkHUD.createWindow(
         posRecorder.windowConfigs.windowName,
         pkrDiv,
-        posRecorder.windowConfigs
-    );
+        posRecorder.windowConfigs);
 
     bonkHUD.loadUISetting(pkrIndex);
 
@@ -288,6 +321,15 @@ const addPkrDiv = () => {
     let pasteButtonContainer = document.getElementById("pasteButtonContainer");
     pasteButtonContainer.appendChild(pasteButton);
 
+    let copyMapButton = bonkHUD.generateButton("Copy Map Data");
+    copyMapButton.style.marginBottom = "5px";
+    copyMapButton.style.height = "25px";
+    copyMapButton.id = "copyMapButton";
+
+    let copyMapButtonContainer = document.getElementById("copyMapButtonContainer");
+    copyMapButtonContainer.appendChild(copyMapButton);
+    copyMapButton.addEventListener("click", convertGameDataToJSON);
+
     // Function to toggle recording
     const toggleRecording = () => {
         if (!posRecorder.isRecording && bonkAPI.isInGame()) {
@@ -306,19 +348,25 @@ const addPkrDiv = () => {
     recordButton.addEventListener("click", toggleRecording);
 
     document.addEventListener("keydown", (event) => {
-        if (event.altKey && event.code === "Digit1") {
+        if (event.altKey && event.code === "Digit3") {
             toggleRecording();
         }
     });
 
-        document.addEventListener("keydown", (event) => {
-        if (event.altKey && event.code === "Digit5") {
+    document.addEventListener("keydown", (event) => {
+        if (event.altKey && event.code === "Digit1") {
             pasteAndStart();
         }
     });
 
+    document.addEventListener("keydown", (event) => {
+        if (event.altKey && event.code === "Digit5") {
+            convertGameDataToJSON();
+        }
+    });
+
     // Function to handle pasting data and starting the game
-    const pasteAndStart = async () => {
+    const pasteAndStart = async() => {
         try {
             const text = await navigator.clipboard.readText();
             if (text.trim()) {
@@ -339,27 +387,26 @@ const addPkrDiv = () => {
     pasteButton.addEventListener("click", pasteAndStart);
 };
 
-
 async function fetchRandomMapAndAuthorNames() {
-        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/mapAndAuthorNames.json?t=${Math.random() * 1000000}`;
+    const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/mapAndAuthorNames.json?t=${Math.random() * 1000000}`;
 
-        try {
-            const response = await fetch(url);
-            const mapAndAuthorNames = await response.json();
+    try {
+        const response = await fetch(url);
+        const mapAndAuthorNames = await response.json();
 
-            // Get a random key from the map
-            const keys = Object.keys(mapAndAuthorNames);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        // Get a random key from the map
+        const keys = Object.keys(mapAndAuthorNames);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
 
-            return {
-                key: randomKey,
-                value: mapAndAuthorNames[randomKey]
-            };
-        } catch (error) {
-            console.error('Error fetching the JSON file:', error);
-            return null; // Return null if an error occurs
-        }
+        return {
+            key: randomKey,
+            value: mapAndAuthorNames[randomKey]
+        };
+    } catch (error) {
+        console.error('Error fetching the JSON file:', error);
+        return null; // Return null if an error occurs
     }
+}
 
 async function createAndSetMap(inputText) {
     try {
@@ -368,8 +415,7 @@ async function createAndSetMap(inputText) {
         const w = parent.frames[0];
         let gs = w.bonkHost.toolFunctions.getGameSettings();
         let map = w.bonkHost.bigClass.mergeIntoNewMap(
-            w.bonkHost.bigClass.getBlankMap()
-        );
+            w.bonkHost.bigClass.getBlankMap());
         // Parse the JSON input
         let inputData;
         try {
@@ -389,12 +435,12 @@ async function createAndSetMap(inputText) {
 
         map.m.a =
             w.bonkHost.players[
-                w.bonkHost.toolFunctions.networkEngine.getLSID()
-            ].userName;
+            w.bonkHost.toolFunctions.networkEngine.getLSID()
+        ].userName;
         map.m.n = 'Generated Parkour';
 
         if (randomMapAndAuthor) {
-            map.m.n = randomMapAndAuthor.key;  // Assign the random key to map.m.n
+            map.m.n = randomMapAndAuthor.key; // Assign the random key to map.m.n
             map.m.a = randomMapAndAuthor.value; // Assign the random value to map.m.a
         }
 
@@ -416,8 +462,7 @@ async function createAndSetMap(inputText) {
             body.p = [-935, -350];
             body.fx = Array.apply(
                 null,
-                Array(Math.min(100, map.physics.shapes.length - i * 100))
-            ).map((_, j) => {
+                Array(Math.min(100, map.physics.shapes.length - i * 100))).map((_, j) => {
                 return i * 100 + j;
             });
             map.physics.bodies.unshift(body);
@@ -482,21 +527,20 @@ async function createAndSetMap(inputText) {
 
         if (spawnY <= 10000 && spawnX <= 10000) {
             // Set up the spawn based on parsed data
-            map.spawns = [
-                {
-                    b: true,
-                    f: true,
-                    gr: false,
-                    n: 'Spawn',
-                    priority: 5,
-                    r: true,
-                    x: spawnX,
-                    xv: 0,
-                    y: spawnY,
-                    ye: false,
-                    yv: 0,
-                },
-            ];
+            map.spawns = [{
+                b: true,
+                f: true,
+                gr: false,
+                n: 'Spawn',
+                priority: 5,
+                r: true,
+                x: spawnX,
+                xv: 0,
+                y: spawnY,
+                ye: false,
+                yv: 0,
+            },
+                         ];
         }
 
         map.s.nc = true;
@@ -517,10 +561,21 @@ async function createAndSetMap(inputText) {
 ('use strict');
 
 function transformMapSize(mapSize) {
-const mapSizeMapping = {
-    1: 30,  2: 24,  3: 20,  4: 17,  5: 15,  6: 13,
-    7: 12,  8: 10,  9: 9,   10: 8,  11: 7,  12: 6,  13: 5
-};
+    const mapSizeMapping = {
+        1: 30,
+        2: 24,
+        3: 20,
+        4: 17,
+        5: 15,
+        6: 13,
+        7: 12,
+        8: 10,
+        9: 9,
+        10: 8,
+        11: 7,
+        12: 6,
+        13: 5
+    };
 
     return mapSizeMapping[Math.floor(mapSize)] || 9; // Default to 9 if no match
 }
@@ -535,8 +590,209 @@ function getProcessedMapSize(inputData) {
     return transformMapSize(inputData.mapSize);
 }
 
+function convertGameDataToJSON() {
+    // Get the game settings’ map from the bonkHost.
+    const w = parent.frames[0];
+    const gameMap = w.bonkHost.toolFunctions.getGameSettings().map;
+    const shapes = gameMap.physics.shapes;
+    const fixtures = gameMap.physics.fixtures;
+    const capZones = gameMap.capZones || [];
+    const lines = [];
+
+    const xOffsetForPkrGenrator = 935;
+    const yOffsetForPkrGenrator = 350;
+
+    // Create a map of capZones for quick lookup
+    const capZoneMap = new Map();
+    capZones.forEach(zone => {
+        if (zone.ty === 1) {
+            capZoneMap.set(zone.i, 'capzone');
+        } else if (zone.ty === 2) {
+            capZoneMap.set(zone.i, 'nojump');
+        }
+    });
+
+    // Create a map to find the body a fixture belongs to
+    const bodyMap = new Map();
+    gameMap.physics.bodies.forEach(body => {
+        body.fx.forEach(fixtureIndex => {
+            bodyMap.set(fixtureIndex, body.p); // Store the body's position for each fixture
+        });
+    });
+
+    // Create a map to find the body a fixture belongs to and store its bounciness
+    const bodyBouncinessMap = new Map();
+    gameMap.physics.bodies.forEach(body => {
+        body.fx.forEach(fixtureIndex => {
+            bodyBouncinessMap.set(fixtureIndex, body.s.re);
+        });
+    });
+
+    // Loop through each fixture (assumed to match the shapes index-by-index)
+    for (let i = 0; i < fixtures.length; i++) {
+
+        // Get the body's position or default to [0, 0] if not found
+        const bodyPos = bodyMap.get(i) || [0, 0];
+
+        const fixture = fixtures[i];
+        const shape = shapes[i];
+
+        // Only consider rectangle shapes
+        if (shape.type !== 'bx')
+            continue;
+
+        const id = i; // Assign unique ID iteratively
 
 
+        // Adjust x and y based on body's position
+        const x = shape.c[0] + bodyPos[0] + xOffsetForPkrGenrator;
+        const y = shape.c[1] + bodyPos[1] + yOffsetForPkrGenrator;
+
+        // Use the fixture name to determine special types.
+        const isCapzone = capZoneMap.get(i) === 'capzone';
+
+        // Convert the angle from radians back to degrees.
+        const angle = shape.a * (180 / Math.PI);
+
+        // Decide friction; if none, default to 0.
+        const friction = fixture.fr ?? 0;
+
+        // Determine if the platform is “bouncy”. When bounciness was null, it meant the platform is bouncy.
+
+        // Get the body's bounciness or default to 0 if not found
+        const bodyBounciness = bodyBouncinessMap.get(i) ?? 0;
+
+        // Determine isBouncy based on body and fixture bounciness
+        if (bodyBounciness > -0.95) {
+            if (fixture.re === null || fixture.re === undefined) {
+                isBouncy = true;
+            } else {
+                isBouncy = fixture.re > -0.95;
+            }
+        } else {
+            if (fixture.re === null || fixture.re === undefined) {
+                isBouncy = false;
+            } else {
+                isBouncy = fixture.re > -0.95;
+            }
+        }
+
+        if (isCapzone) {
+            isBouncy = false;
+        }
+
+        const isDeath = !!fixture.d;
+
+        if (isDeath) {
+            isBouncy = false;
+        }
+
+        const bounciness = isBouncy ? null : -1;
+
+        // We infer isBgLine from the noPhysics flag.
+        const noPhysics = fixture.np;
+        const isBgLine = !!noPhysics;
+
+        const isNoJump = capZoneMap.get(i) === 'nojump';
+        // Other attributes that always default to false:
+        const isOnlyForProgram = false;
+        const isFloor = true;
+        // Optionally, isFrame can be set; we set it to false as we lost that info.
+        const isFrame = false;
+
+        // Create the JSON object for this line.
+        const line = {
+            id: id,
+            color: fixture.f, // same as fixture.f, but using shape is fine.
+            bounciness: bounciness,
+            isBouncy: isBouncy,
+            isOnlyForProgram: isOnlyForProgram,
+            friction: friction,
+            isDeath: isDeath, // fixture.d was set from r.isDeath.
+            isBgLine: isBgLine,
+            noPhysics: noPhysics,
+            // noGrapple: fixture.ng, // from r.noGrapple.
+            noGrapple: true,
+            isCapzone: isCapzone,
+            x: x,
+            y: y,
+            width: shape.w,
+            height: shape.h,
+            angle: angle,
+            isNoJump: isNoJump,
+            isFrame: isFrame,
+            isFloor: isFloor
+        };
+
+        lines.push(line);
+    }
+
+    // For spawn and mapSize we may take existing values if present or use dummy ones.
+    const spawn = (gameMap.spawns && gameMap.spawns.length > 0)
+    ? {
+        spawnX: gameMap.spawns[0].x,
+        spawnY: gameMap.spawns[0].y
+    }
+    : {
+        spawnX: 0,
+        spawnY: 0
+    };
+
+    const mapSize = transformMapSizeFromGameData(gameMap.physics.ppm) || 6; // Use the transformed map size
+
+
+    // Build the final JSON output.
+    const outputJSON = {
+        spawn: spawn,
+        mapSize: mapSize,
+        lines: lines,
+        version: 1
+    };
+    const jsonString = JSON.stringify(outputJSON, null, 2);
+
+    // Create a temporary text area element to facilitate clipboard copying
+    const textArea = document.createElement('textarea');
+    textArea.value = jsonString;
+    document.body.appendChild(textArea);
+
+    // Select the text and copy it
+    textArea.select();
+    textArea.setSelectionRange(0, textArea.value.length); // For mobile devices
+    document.execCommand('copy');
+
+    // Clean up by removing the textarea from the DOM
+    document.body.removeChild(textArea);
+
+    // Log success
+    console.log('JSON copied to clipboard successfully!');
+
+    return outputJSON;
+}
+
+function transformMapSizeFromGameData(mapSize) {
+    const mapSizeMapping = {
+        1: 30,
+        2: 24,
+        3: 20,
+        4: 17,
+        5: 15,
+        6: 13,
+        7: 12,
+        8: 10,
+        9: 9,
+        10: 8,
+        11: 7,
+        12: 6,
+        13: 5
+    };
+
+    // Reverse the mapping: 1 -> 30 becomes 30 -> 1
+    const reversedMap = Object.fromEntries(
+        Object.entries(mapSizeMapping).map(([key, value]) => [value, parseInt(key)]));
+
+    // Look up the new map size from the reversed map
+    return reversedMap[mapSize] || 9; // Default to 9 if no match
+}
 
 let injector = str => {
     let newStr = str;
@@ -547,14 +803,12 @@ let injector = str => {
 
     const BIGVAR = newStr.match(/[A-Za-z0-9$_]+\[[0-9]{6}\]/)[0].split('[')[0];
     let stateCreationString = newStr.match(
-        /[A-Za-z]\[...(\[[0-9]{1,4}\]){2}\]\(\[\{/
-    )[0];
+        /[A-Za-z]\[...(\[[0-9]{1,4}\]){2}\]\(\[\{/)[0];
     let stateCreationStringIndex = stateCreationString.match(/[0-9]{1,4}/g);
     stateCreationStringIndex =
         stateCreationStringIndex[stateCreationStringIndex.length - 1];
     let stateCreation = newStr.match(
-        `[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\]=[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[${stateCreationStringIndex}\\]\\].+?(?=;);`
-    )[0];
+`[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\]=[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[${stateCreationStringIndex}\\]\\].+?(?=;);`)[0];
     stateCreationString = stateCreation.split(']')[0] + ']';
 
     const SET_STATE = `
@@ -588,15 +842,13 @@ let injector = str => {
         `;
 
     const stateSetRegex = newStr.match(
-        /\* 999\),[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],null,[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],true\);/
-    )[0];
+        /\* 999\),[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],null,[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],true\);/)[0];
     newStr = newStr.replace(stateSetRegex, stateSetRegex + SET_STATE);
     return newStr;
 };
 
-
-
-if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
+if (!window.bonkCodeInjectors)
+    window.bonkCodeInjectors = [];
 window.bonkCodeInjectors.push(bonkCode => {
     try {
         return injector(bonkCode);
@@ -605,7 +857,6 @@ window.bonkCodeInjectors.push(bonkCode => {
         throw error;
     }
 });
-
 
 // Initialization logic to set up the UI once the document is ready
 const init = () => {
