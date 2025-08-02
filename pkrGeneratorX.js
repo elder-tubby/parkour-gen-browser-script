@@ -1,3 +1,4 @@
+
 // ==UserScript==
 // @name         pkrGeneratorX
 // @version      0.1.0
@@ -7,71 +8,155 @@
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
+
+("use strict");
+
+// Constants
+const CONFIG = {
+    WINDOW_NAME: "pkrGeneratorX",
+    WINDOW_ID: "pkr_generator_x_window",
+    MOD_VERSION: "0.1.0",
+    BONK_LIB_VERSION: "1.1.3",
+    BONK_VERSION: "49",
+    API_BASE_URL: "https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script",
+    MAP_LOAD_DELAY: 2000,
+    BATCH_SIZE: 100,
+    COUNTDOWN_ALERTS: [10, 3, 2, 1],
+    MAP_SIZE_MAPPING: {
+        1: 30, 2: 24, 3: 20, 4: 17, 5: 15, 6: 13,
+        7: 12, 8: 10, 9: 9, 10: 8, 11: 7, 12: 6, 13: 5
+    }
+};
+
+// Utility functions
+const Utils = {
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
+        const secs = (seconds % 60).toString().padStart(2, "0");
+        return `${minutes}:${secs}`;
+    },
+
+    getCacheQuery() {
+        return `?t=${Math.random() * 1000000}`;
+    },
+
+    safeParseJSON(data) {
+        try {
+            return typeof data === "string" ? JSON.parse(data) : data;
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            return null;
+        }
+    },
+
+    showNotification(message, duration = 3000) {
+        const note = document.createElement('div');
+        note.textContent = message;
+        Object.assign(note.style, {
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#222',
+            color: '#fff',
+            padding: '10px 20px',
+            borderRadius: '6px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+            fontSize: '14px',
+            zIndex: 9999,
+            opacity: 0,
+            transition: 'opacity 0.3s ease-in-out'
+        });
+
+        document.body.appendChild(note);
+        requestAnimationFrame(() => {
+            note.style.opacity = 1;
+        });
+
+        setTimeout(() => {
+            note.style.opacity = 0;
+            note.addEventListener('transitionend', () => {
+                note.remove();
+            }, { once: true });
+        }, duration);
+    }
+
+};
+
+// Add styles
 const style = document.createElement("style");
 style.textContent = `
 .pkr-select {
-    width: 100%; /* or change to a specific value like 150px */
-    padding: 2px 4px; /* smaller padding */
+    width: 100%;
+    padding: 2px 4px;
     background-color: #1e1e1e;
     color: white;
     border: 1px solid #666;
     border-radius: 4px;
-    font-size: 10px; /* smaller font size */
+    font-size: 10px;
 }
 `;
-
 document.head.appendChild(style);
 
-"use strict";
+// Main application object
+window.pkrGeneratorX = {
+    // Application state
+    state: {
+        chatAlerts: false,
+        keepPositions: false,
+        selectedGroup: null,
+        selectedMapId: null,
+        type: 1,
+        mapsStructureData: {}
+    },
 
-window.pkrGeneratorX = {};
+    // Window configuration
+    windowConfigs: {
+        windowName: CONFIG.WINDOW_NAME,
+        windowId: CONFIG.WINDOW_ID,
+        modVersion: CONFIG.MOD_VERSION,
+        bonkLIBVersion: CONFIG.BONK_LIB_VERSION,
+        bonkVersion: CONFIG.BONK_VERSION,
+        windowContent: null
+    },
 
-pkrGeneratorX.state = {
-    chatAlerts: false,
-    keepPositions: false,
-    selectedGroup: null,
-    selectedMapId: null,
-    type: 1,
-    mapsStructureData: {}, // Loaded from remote
+    // Cached DOM elements
+    domCache: {},
+
+    // Get and cache DOM elements
+    getElement(id) {
+        if (!this.domCache[id]) {
+            this.domCache[id] = document.getElementById(id);
+        }
+        return this.domCache[id];
+    },
+
+    // Clear DOM cache
+    clearDOMCache() {
+        this.domCache = {};
+    }
 };
 
-
-// ------------------------------
-// Window Configuration
-// ------------------------------
-pkrGeneratorX.windowConfigs = {
-    windowName: "pkrGeneratorX",
-    windowId: "pkr_generator_x_window",
-    modVersion: "0.1.0",
-    bonkLIBVersion: "1.1.3",
-    bonkVersion: "49",
-    windowContent: null,
-};
-
-// ------------------------------
-// Dummy Data (to be replaced by real source)
-// ------------------------------
-
-
+// Timer Module
 pkrGeneratorX.timerModule = {
     currentTime: 0,
     isRunning: false,
     loopDuration: null,
     intervalId: null,
 
-    formatTime(sec) {
-        const m = Math.floor(sec / 60).toString().padStart(2, "0");
-        const s = (sec % 60).toString().padStart(2, "0");
-        return `${m}:${s}`;
+    formatTime(seconds) {
+        return Utils.formatTime(seconds);
     },
 
     updateDisplay() {
-        const disp = document.getElementById("pkr-timer-display");
-        if (disp) disp.textContent = this.formatTime(this.currentTime);
+        const display = pkrGeneratorX.getElement("pkr-timer-display");
+        if (display) {
+            display.textContent = this.formatTime(this.currentTime);
+        }
     },
 
     startLoop() {
-        if (this.intervalId) clearInterval(this.intervalId);
+        this.stopLoop();
 
         this.intervalId = setInterval(async () => {
             if (!this.isRunning) return;
@@ -79,43 +164,64 @@ pkrGeneratorX.timerModule = {
             this.currentTime = Math.max(0, this.currentTime - 1);
             this.updateDisplay();
 
-            // === 🔔 Send chat messages at critical moments ===
-            if (this.currentTime === 10) {
-                pkrGeneratorX.chatManager.sendChatMessage("Next map in 10 seconds");
-            } else if ([3, 2, 1].includes(this.currentTime)) {
-                pkrGeneratorX.chatManager.sendChatMessage(String(this.currentTime));
+            // Send countdown alerts
+            if (CONFIG.COUNTDOWN_ALERTS.includes(this.currentTime)) {
+                const message = this.currentTime === 10
+                ? "Next map in 10 seconds"
+                : String(this.currentTime);
+                pkrGeneratorX.chatManager.sendChatMessage(message);
             }
 
-            // === 🧭 When timer hits 0 ===
+            // Timer reached zero
             if (this.currentTime === 0) {
-                await pkrGeneratorX.mapManager.selectAndStartRandomMap();
-
-                if (this.loopDuration) {
-                    this.isRunning = false; // pause during map load
-                    clearInterval(this.intervalId);
-
-                    // wait 2 seconds before restarting loop
-                    setTimeout(() => {
-                        this.currentTime = this.loopDuration;
-                        this.updateDisplay();
-                        this.isRunning = true;
-                        this.startLoop();
-                    }, 2000);
-                } else {
-                    this.stop();
-                }
+                await this.handleTimerEnd();
             }
         }, 1000);
     },
 
+    async handleTimerEnd() {
+        try {
+            await pkrGeneratorX.mapManager.selectAndStartRandomMap();
+
+            if (this.loopDuration) {
+                this.isRunning = false;
+                this.stopLoop();
+
+                setTimeout(() => {
+                    this.currentTime = this.loopDuration;
+                    this.updateDisplay();
+                    this.isRunning = true;
+                    this.startLoop();
+                }, CONFIG.MAP_LOAD_DELAY);
+            } else {
+                this.stop();
+            }
+        } catch (error) {
+            console.error("Error handling timer end:", error);
+            this.stop();
+        }
+    },
+
+    stopLoop() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    },
+
     toggleStartPause() {
         this.isRunning = !this.isRunning;
-
-        const btn = document.getElementById("pkr-startpause-btn");
-        if (btn) btn.textContent = this.isRunning ? "Pause" : "Start";
+        this.updateButtonText();
 
         if (this.isRunning) {
             this.startLoop();
+        }
+    },
+
+    updateButtonText() {
+        const button = pkrGeneratorX.getElement("pkr-startpause-btn");
+        if (button) {
+            button.textContent = this.isRunning ? "Pause" : "Start";
         }
     },
 
@@ -126,416 +232,427 @@ pkrGeneratorX.timerModule = {
 
     reset() {
         this.isRunning = false;
-        if (this.intervalId) clearInterval(this.intervalId);
-        this.intervalId = null;
+        this.stopLoop();
         this.currentTime = 0;
         this.updateDisplay();
-
-        const btn = document.getElementById("pkr-startpause-btn");
-        if (btn) btn.textContent = "Start";
+        this.updateButtonText();
     },
 
     stop() {
         this.isRunning = false;
-        if (this.intervalId) clearInterval(this.intervalId);
-        this.intervalId = null;
-
-        const btn = document.getElementById("pkr-startpause-btn");
-        if (btn) btn.textContent = "Start";
+        this.stopLoop();
+        this.updateButtonText();
     },
 
     setLoopDuration() {
         if (this.currentTime > 0) {
             this.loopDuration = this.currentTime;
-            console.log("Loop duration set to", this.formatTime(this.loopDuration));
+            // console.log("Loop duration set to", this.formatTime(this.loopDuration));
         } else {
-            console.warn("Cannot set loop duration to 0.");
+            Utils.showNotification("Cannot set loop duration to 0.");
         }
     }
 };
 
+// Chat Manager
 pkrGeneratorX.chatManager = {
-    canSendChatMessage: true,
-
     sendChatMessage(message) {
         if (!pkrGeneratorX.state.chatAlerts) return;
-        window.bonkHost?.toolFunctions?.networkEngine?.chatMessage(message);
+
+        try {
+            window.bonkHost?.toolFunctions?.networkEngine?.chatMessage(message);
+        } catch (error) {
+            console.error("Error sending chat message:", error);
+        }
     }
 };
 
+// Map Fetcher
 pkrGeneratorX.mapFetcher = {
     async fetchMapsStructure() {
-        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/main/map-data/groups.json?t=${Math.random()}`;
+        const url = `${CONFIG.API_BASE_URL}/main/map-data/groups.json${Utils.getCacheQuery()}`;
+
         try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error('Failed to load groups');
-            const data = await res.json();
-            console.log("[MapFetcher] setting _mapsStructure to:", data);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to load groups`);
+            }
+
+            const data = await response.json();
+            // console.log("[MapFetcher] Loaded maps structure:", data);
             pkrGeneratorX._mapsStructure = data;
             return data;
-        } catch (e) {
-            console.error('[MapFetcher] Error fetching groups:', e);
-            alert('Failed to load group data');
+        } catch (error) {
+            const message = "Failed to load group data. Please check your connection.";
+            Utils.showNotification(message);
+            console.error("[MapFetcher] Error:", error);
             return null;
         }
-    }
-    ,
+    },
 
     async fetchCurrentMapData() {
         const mapId = pkrGeneratorX.state.selectedMapId;
-        if (!mapId) return null;
+        if (!mapId) {
+            console.warn("[MapFetcher] No map ID selected");
+            return null;
+        }
 
-        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/${mapId}.json?t=${Math.random() * 1000000}`;
+        const url = `${CONFIG.API_BASE_URL}/refs/heads/main/map-data/${mapId}.json${Utils.getCacheQuery()}`;
+
         try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error("Failed to fetch map JSON");
-            return await res.json();
-        } catch (err) {
-            console.error("Error loading map data:", err);
-            alert("Failed to load map. Try again later.");
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to fetch map`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            const message = "Failed to load map. Please try again.";
+            Utils.showNotification(message);
+            console.error("[MapFetcher] Error loading map:", error);
             return null;
         }
     },
 
     async fetchRandomMapAndAuthorNames() {
-        const url = `https://raw.githubusercontent.com/elder-tubby/parkour-gen-browser-script/refs/heads/main/map-data/mapAndAuthorNames.json?t=${Math.random() * 1000000}`;
+        const url = `${CONFIG.API_BASE_URL}/refs/heads/main/map-data/mapAndAuthorNames.json${Utils.getCacheQuery()}`;
+
         try {
-            const res = await fetch(url);
-            const json = await res.json();
-            const keys = Object.keys(json);
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to fetch names`);
+            }
+
+            const data = await response.json();
+            const keys = Object.keys(data);
+
+            if (keys.length === 0) {
+                throw new Error("No map names available");
+            }
+
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            return { key: randomKey, value: json[randomKey] };
-        } catch (err) {
-            console.error("Error fetching map/author names:", err);
+            return { key: randomKey, value: data[randomKey] };
+        } catch (error) {
+            console.error("[MapFetcher] Error fetching map/author names:", error);
             return null;
         }
-    },
+    }
 };
 
-// ------------------------------
 // Map Manager
-// ------------------------------
-window.pkrGeneratorX.mapManager = {
-
-
-
+pkrGeneratorX.mapManager = {
     async createMap() {
-
         const mapId = pkrGeneratorX.state.selectedMapId;
         if (!mapId) {
-            console.error("[MapManager] No map selected.");
+            Utils.showNotification("No map selected.");
             return;
         }
+
         try {
-            console.log("[MapManager] createMap for mapId=", mapId);
-            const fetchedData = await pkrGeneratorX.mapFetcher.fetchCurrentMapData(mapId);
-            const randomMapAndAuthor = await pkrGeneratorX.mapFetcher.fetchRandomMapAndAuthorNames();
-            const w = parent.frames[0];
-            let gs = w.bonkHost.toolFunctions.getGameSettings();
-            let map = w.bonkHost.bigClass.mergeIntoNewMap(
-                w.bonkHost.bigClass.getBlankMap());
-            // Parse the JSON input
-            let inputData;
-            try {
-                if (typeof inputText === 'string') {
-                    inputData = JSON.parse(fetchedData);
-                } else {
-                    inputData = fetchedData; // If it's already an object, just use it
-                }
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-            }
-            // Extract spawn values
-            const spawnX = inputData.spawn.spawnX;
-            const spawnY = inputData.spawn.spawnY;
+            // console.log("[MapManager] Creating map for ID:", mapId);
 
-            const mapSize = this.getProcessedMapSize(inputData);
+            const [mapData, nameData] = await Promise.all([
+                pkrGeneratorX.mapFetcher.fetchCurrentMapData(),
+                pkrGeneratorX.mapFetcher.fetchRandomMapAndAuthorNames()
+            ]);
 
-            map.m.a =
-                w.bonkHost.players[
-                w.bonkHost.toolFunctions.networkEngine.getLSID()
-            ].userName;
-            map.m.n = 'Generated Parkour';
-
-            if (randomMapAndAuthor) {
-                map.m.n = randomMapAndAuthor.key; // Assign the random key to map.m.n
-                map.m.a = randomMapAndAuthor.value; // Assign the random value to map.m.a
+            if (!mapData) {
+                throw new Error("Failed to fetch map data");
             }
 
-            // Set up shapes from the input data
-            map.physics.shapes = inputData.lines.map(r => {
-                let shape = w.bonkHost.bigClass.getNewBoxShape();
-                shape.w = r.width;
-                shape.h = r.height;
-                shape.c = [r.x, r.y];
-                shape.a = r.angle / (180 / Math.PI);
-                shape.color = r.color;
-                shape.d = true; // Assuming 'd' is always true for shapes
-                return shape;
-            });
+            await this.buildAndSetMap(mapData, nameData);
+            // console.log("[MapManager] Map created successfully");
+        } catch (error) {
+            console.error("[MapManager] Error creating map:", error);
+            Utils.showNotification("Failed to create map. Check console for details.");
+        }
+    },
 
-            // Add bodies in batches of 100
-            for (let i = 0; i < Math.ceil(map.physics.shapes.length / 100); i++) {
-                let body = w.bonkHost.bigClass.getNewBody();
-                body.p = [-935, -350];
-                body.fx = Array.apply(
-                    null,
-                    Array(Math.min(100, map.physics.shapes.length - i * 100))).map((_, j) => {
-                    return i * 100 + j;
-                });
-                map.physics.bodies.unshift(body);
-            }
-
-            // Create fixtures based on the input data
-            map.physics.fixtures = inputData.lines.map((r, i) => {
-                let fixture = w.bonkHost.bigClass.getNewFixture();
-                fixture.sh = i;
-                fixture.d = r.isDeath;
-                fixture.re = r.bounciness;
-                fixture.fr = r.friction;
-                fixture.np = r.noPhysics;
-                fixture.ng = r.noGrapple; // Updated to match new JSON structure
-                fixture.f = r.color;
-
-                // Set the name based on line attributes
-                map.physics.bro = map.physics.bodies.map((_, i) => i);
-                if (r.isCapzone) {
-                    fixture.n = r.id + '. CZ';
-                } else if (r.isNoJump) {
-                    fixture.n = r.id + '. NoJump';
-                } else if (r.noPhysics) {
-                    fixture.n = r.id + '. NoPhysics';
-                } else {
-                    fixture.n = r.id + '. Shape';
-                }
-
-                return fixture;
-            });
-
-            map.physics.bro = map.physics.bodies.map((_, i) => i);
-
-            // Add cap zones based on conditions
-            inputData.lines.forEach(line => {
-                if (line.isCapzone) {
-                    // Create a new cap zone object
-                    const newCapZone = {
-                        n: line.id + '. Cap Zone',
-                        ty: 1,
-                        l: 0.01,
-                        i: line.id,
-                    };
-
-                    // Access the existing capZones array and add the new cap zone
-                    map.capZones.push(newCapZone);
-                }
-
-                if (line.isNoJump) {
-                    // Create a new cap zone object for NoJump
-                    const newCapZoneNoJump = {
-                        n: line.id + '. No=Jump',
-                        ty: 2,
-                        l: 10,
-                        i: line.id,
-                    };
-
-                    // Access the existing capZones array and add the new cap zone
-                    map.capZones.push(newCapZoneNoJump);
-                }
-            });
-
-            if (spawnY <= 10000 && spawnX <= 10000) {
-                // Set up the spawn based on parsed data
-                map.spawns = [{
-                    b: true,
-                    f: true,
-                    gr: false,
-                    n: 'Spawn',
-                    priority: 5,
-                    r: true,
-                    x: spawnX,
-                    xv: 0,
-                    y: spawnY,
-                    ye: false,
-                    yv: 0,
-                },
-                             ];
-            }
-
-            map.s.nc = true;
-            map.s.re = true;
-            map.physics.ppm = mapSize;
-
-            gs.map = map;
-            w.bonkHost.menuFunctions.setGameSettings(gs);
-            w.bonkHost.menuFunctions.updateGameSettings();
-
-            //            showNotification('Map created successfully!');
-        } catch (e) {
-            console.error('An error occurred while creating the map:', e);
-            // showNotification("Failed to create the map. Check the console for errors.");
+    async buildAndSetMap(inputData, nameData) {
+        const parsedData = Utils.safeParseJSON(inputData);
+        if (!parsedData) {
+            throw new Error("Invalid map data format");
         }
 
-        // Example use (you can customize this later):
-        // window.bonkHost.loadMap(data.mapCode);
-        // pkrGeneratorX.chatManager.sendChatMessage(`Map by ${meta.value} loaded!`);
+        const window = parent.frames[0];
+        const bonkHost = window.bonkHost;
+
+        if (!bonkHost) {
+            throw new Error("BonkHost not available");
+        }
+
+        const gameSettings = bonkHost.toolFunctions.getGameSettings();
+        const map = bonkHost.bigClass.mergeIntoNewMap(bonkHost.bigClass.getBlankMap());
+
+        // Set map metadata
+        this.setMapMetadata(map, nameData);
+
+        // Build map geometry
+        this.buildMapGeometry(map, parsedData, window);
+
+        // Set spawn point
+        this.setSpawnPoint(map, parsedData);
+
+        // Configure map settings
+        this.configureMapSettings(map, parsedData);
+
+        // Apply to game
+        gameSettings.map = map;
+        bonkHost.menuFunctions.setGameSettings(gameSettings);
+        bonkHost.menuFunctions.updateGameSettings();
+    },
+
+    setMapMetadata(map, nameData) {
+        const currentPlayer = window.bonkHost?.players?.[
+            window.bonkHost.toolFunctions.networkEngine.getLSID()
+        ];
+
+        map.m.a = currentPlayer?.userName || "Unknown";
+        map.m.n = "Generated Parkour";
+
+        if (nameData) {
+            map.m.n = nameData.key;
+            map.m.a = nameData.value;
+        }
+    },
+
+    buildMapGeometry(map, inputData, window) {
+        if (!inputData.lines || !Array.isArray(inputData.lines)) {
+            throw new Error("Invalid lines data in map");
+        }
+
+        // Create shapes
+        map.physics.shapes = inputData.lines.map((line) => {
+            const shape = window.bonkHost.bigClass.getNewBoxShape();
+            shape.w = line.width || 0;
+            shape.h = line.height || 0;
+            shape.c = [line.x || 0, line.y || 0];
+            shape.a = (line.angle || 0) / (180 / Math.PI);
+            shape.color = line.color;
+            shape.d = true;
+            return shape;
+        });
+
+        // Create bodies in batches
+        const numBatches = Math.ceil(map.physics.shapes.length / CONFIG.BATCH_SIZE);
+        for (let i = 0; i < numBatches; i++) {
+            const body = window.bonkHost.bigClass.getNewBody();
+            body.p = [-935, -350];
+
+            const startIndex = i * CONFIG.BATCH_SIZE;
+            const endIndex = Math.min(CONFIG.BATCH_SIZE, map.physics.shapes.length - startIndex);
+            body.fx = Array.from({ length: endIndex }, (_, j) => startIndex + j);
+
+            map.physics.bodies.unshift(body);
+        }
+
+        // Create fixtures
+        map.physics.fixtures = inputData.lines.map((line, index) => {
+            const fixture = window.bonkHost.bigClass.getNewFixture();
+            fixture.sh = index;
+            fixture.d = line.isDeath || false;
+            fixture.re = line.bounciness || 0;
+            fixture.fr = line.friction || 0;
+            fixture.np = line.noPhysics || false;
+            fixture.ng = line.noGrapple || false;
+            fixture.f = line.color;
+
+            // Set fixture name
+            if (line.isCapzone) {
+                fixture.n = `${line.id}. CZ`;
+            } else if (line.isNoJump) {
+                fixture.n = `${line.id}. NoJump`;
+            } else if (line.noPhysics) {
+                fixture.n = `${line.id}. NoPhysics`;
+            } else {
+                fixture.n = `${line.id}. Shape`;
+            }
+
+            return fixture;
+        });
+
+        map.physics.bro = map.physics.bodies.map((_, index) => index);
+
+        // Add cap zones
+        this.addCapZones(map, inputData.lines);
+    },
+
+    addCapZones(map, lines) {
+        lines.forEach((line) => {
+            if (line.isCapzone) {
+                map.capZones.push({
+                    n: `${line.id}. Cap Zone`,
+                    ty: 1,
+                    l: 0.01,
+                    i: line.id,
+                });
+            }
+
+            if (line.isNoJump) {
+                map.capZones.push({
+                    n: `${line.id}. No Jump`,
+                    ty: 2,
+                    l: 10,
+                    i: line.id,
+                });
+            }
+        });
+    },
+
+    setSpawnPoint(map, inputData) {
+        const spawn = inputData.spawn;
+        if (!spawn || spawn.spawnX > 10000 || spawn.spawnY > 10000) {
+            return;
+        }
+
+        map.spawns = [{
+            b: true,
+            f: true,
+            gr: false,
+            n: "Spawn",
+            priority: 5,
+            r: true,
+            x: spawn.spawnX,
+            xv: 0,
+            y: spawn.spawnY,
+            ye: false,
+            yv: 0,
+        }];
+    },
+
+    configureMapSettings(map, inputData) {
+        map.s.nc = true;
+        map.s.re = true;
+        map.physics.ppm = this.getProcessedMapSize(inputData);
+    },
+
+    getProcessedMapSize(inputData) {
+        const mapSize = inputData.mapSize;
+        if (mapSize === undefined) return 9;
+
+        if (!inputData.version) {
+            return mapSize;
+        }
+
+        return CONFIG.MAP_SIZE_MAPPING[Math.floor(mapSize)] || 9;
     },
 
     async createAndStartMap() {
         await this.createMap();
 
-        const keep = pkrGeneratorX.state.keepPositions;
-        const bonk = window.bonkHost;
+        try {
+            const bonkHost = window.bonkHost;
+            const keepPositions = pkrGeneratorX.state.keepPositions;
 
-        const tempKeep = bonk.keepState;
-        bonk.keepState = keep;
-        bonk.startGame();
-        bonk.keepState = tempKeep;
+            const originalKeepState = bonkHost.keepState;
+            bonkHost.keepState = keepPositions;
+            bonkHost.startGame();
+            bonkHost.keepState = originalKeepState;
 
-        console.log("[MapManager] Game started with keepPositions:", keep);
+            // console.log("[MapManager] Game started with keepPositions:", keepPositions);
+        } catch (error) {
+            console.error("[MapManager] Error starting game:", error);
+        }
     },
 
     async selectAndStartRandomMap() {
-        console.log("[MapManager] selectAndStartRandomMap");
-        const state = pkrGeneratorX.state;
+        // console.log("[MapManager] Selecting random map");
 
-        const type = `Type ${state.type}`;
-        const groupMaps = (pkrGeneratorX._mapsStructure[type] || {})[state.selectedGroup] || [];
+        try {
+            const state = pkrGeneratorX.state;
+            const typeKey = `Type ${state.type}`;
+            const groupMaps = (pkrGeneratorX._mapsStructure[typeKey] || {})[state.selectedGroup] || [];
 
-        const available = groupMaps.filter(m => m.mapId !== state.selectedMapId);
-        if (!available.length) {
-            console.warn("[MapManager] No alternate maps available.");
-            return;
+            const availableMaps = groupMaps.filter(m => m.mapId !== state.selectedMapId);
+            if (availableMaps.length === 0) {
+                console.warn("[MapManager] No alternate maps available");
+                return;
+            }
+
+            const randomMap = availableMaps[Math.floor(Math.random() * availableMaps.length)];
+            // console.log("[MapManager] Selected random map:", randomMap);
+
+            state.selectedMapId = randomMap?.mapId;
+            this.updateMapDropdown();
+            await this.createAndStartMap();
+        } catch (error) {
+            console.error("[MapManager] Error selecting random map:", error);
         }
-
-        const random = available[Math.floor(Math.random() * available.length)];
-        console.log("[MapManager] random selection=", random);
-        state.selectedMapId = random?.mapId;
-
-        this.updateMapDropdown();
-        await this.createAndStartMap();
-    },
-
-
-    transformMapSize(mapSize) {
-        const mapSizeMapping = {
-            1: 30,
-            2: 24,
-            3: 20,
-            4: 17,
-            5: 15,
-            6: 13,
-            7: 12,
-            8: 10,
-            9: 9,
-            10: 8,
-            11: 7,
-            12: 6,
-            13: 5
-        };
-
-        return mapSizeMapping[Math.floor(mapSize)] || 9; // Default to 9 if no match
-    },
-
-    getProcessedMapSize(inputData) {
-        if (!inputData.version) {
-            // No version present, return mapSize as is
-            return inputData.mapSize !== undefined ? inputData.mapSize : 9;
-        }
-
-        // If version exists, transform the mapSize
-        return this.transformMapSize(inputData.mapSize);
     },
 
     updateMapDropdown() {
-        const sel = document.getElementById('pkr-map-select');
-        if (sel) sel.value = pkrGeneratorX.state.selectedMapId;
+        const dropdown = pkrGeneratorX.getElement("pkr-map-select");
+        if (dropdown) {
+            dropdown.value = pkrGeneratorX.state.selectedMapId || "";
+        }
     }
 };
 
-
-// ------------------------------
-// CapZone & Step & Frame Event Injector
-// ------------------------------
-// Borrowed from old cap-event-manager.js
+// Bonk API setup
 window.bonkAPI = window.bonkAPI || {};
+
 bonkAPI.addEventListener = function (event, method, scope, context) {
     bonkAPI.events.addEventListener(event, method, scope, context);
 };
 
-
-bonkAPI.EventHandler;
-
-(bonkAPI.EventHandler = function () {
+bonkAPI.EventHandler = function () {
     this.hasEvent = [];
-}).prototype = {
-    /**
-     * Begins to listen for the given event to call the method later.
-     * @method
-     * @memberof EventHandler
-     * @param {string} event - Event that is listened for
-     * @param {function(object)} method - Function that is called
-     * @param {*} [scope] - Where the function should be called from, defaults to window
-     * @param {*} [context] - defaults to nothing
-     */
+};
+
+bonkAPI.EventHandler.prototype = {
     addEventListener: function (event, method, scope, context) {
-        var listeners, handlers;
-        if (!(listeners = this.listeners)) {
+        let listeners = this.listeners;
+        if (!listeners) {
             listeners = this.listeners = {};
         }
 
-        if (!(handlers = listeners[event])) {
+        let handlers = listeners[event];
+        if (!handlers) {
             handlers = listeners[event] = [];
             this.hasEvent[event] = true;
         }
 
-        scope = scope ? scope : window;
+        scope = scope || window;
         handlers.push({
             method: method,
             scope: scope,
-            context: context ? context : scope,
+            context: context || scope,
         });
     },
 
-    /**
-     * Fires the event given to call the methods linked to that event.
-     * @method
-     * @memberof EventHandler
-     * @param {string} event - Event that is being fired
-     * @param {object} data - Data sent along with the event
-     * @param {*} [context]
-     */
     fireEvent: function (event, data, context) {
-        var listeners, handlers, handler, l, scope;
-        if (!(listeners = this.listeners)) {
-            return;
-        }
-        if (!(handlers = listeners[event])) {
-            return;
-        }
-        l = handlers.length;
-        for (let i = 0; i < l; i++) {
-            handler = handlers[i];
+        const listeners = this.listeners;
+        if (!listeners) return;
+
+        const handlers = listeners[event];
+        if (!handlers) return;
+
+        for (let i = 0; i < handlers.length; i++) {
+            const handler = handlers[i];
             if (typeof context !== "undefined" && context !== handler.context) {
                 continue;
             }
-            handler.method.call(handler.scope, data);
+            try {
+                handler.method.call(handler.scope, data);
+            } catch (error) {
+                console.error("Error in event handler:", error);
+            }
         }
     },
 };
 
 bonkAPI.events = new bonkAPI.EventHandler();
 
-// *Injecting code into src
+// Code injection for events
 bonkAPI.injector = function (src) {
     let newSrc = src;
 
-    //! Inject capZoneEvent fire
-    let orgCode = `K$h[9]=K$h[0][0][K$h[2][138]]()[K$h[2][115]];`;
-    let newCode = `
+    // Inject capZoneEvent
+    const orgCapCode = `K$h[9]=K$h[0][0][K$h[2][138]]()[K$h[2][115]];`;
+    const newCapCode = `
         K$h[9]=K$h[0][0][K$h[2][138]]()[K$h[2][115]];
 
         bonkAPI_capZoneEventTry: try {
-            // Initialize
             let inputState = z0M[0][0];
             let currentFrame = inputState.rl;
             let playerID = K$h[0][0].m_userData.arrayID;
@@ -547,15 +664,14 @@ bonkAPI.injector = function (src) {
                 window.bonkAPI.events.fireEvent("capZoneEvent", sendObj);
             }
         } catch(err) {
-            console.error("ERROR: capZoneEvent");
-            console.error(err);
+            console.error("ERROR: capZoneEvent", err);
         }`;
 
-    newSrc = newSrc.replace(orgCode, newCode);
+    newSrc = newSrc.replace(orgCapCode, newCapCode);
 
-    //! Inject stepEvent fire
-    orgCode = `return z0M[720];`;
-    newCode = `
+    // Inject stepEvent
+    const orgStepCode = `return z0M[720];`;
+    const newStepCode = `
         bonkAPI_stepEventTry: try {
             let inputStateClone = JSON.parse(JSON.stringify(z0M[0][0]));
             let currentFrame = inputStateClone.rl;
@@ -567,74 +683,32 @@ bonkAPI.injector = function (src) {
                 window.bonkAPI.events.fireEvent("stepEvent", sendObj);
             }
         } catch(err) {
-            console.error("ERROR: stepEvent");
-            console.error(err);
+            console.error("ERROR: stepEvent", err);
         }
 
         return z0M[720];`;
 
-    newSrc = newSrc.replace(orgCode, newCode);
+    newSrc = newSrc.replace(orgStepCode, newStepCode);
 
-    //! Inject frameIncEvent fire
-    //TODO: update to bonk 49
-    orgCode = `Y3z[8]++;`;
-    newCode = `
-        Y3z[8]++;
-
-        bonkAPI_frameIncEventTry: try {
-            if (window.bonkAPI.events.hasEvent["frameIncEvent"]) {
-                var sendObj = { frame: Y3z[8], gameStates: o3x[7] };
-
-                window.bonkAPI.events.fireEvent("frameIncEvent", sendObj);
-            }
-        } catch(err) {
-            console.error("ERROR: frameIncEvent");
-            console.error(err);
-        }`;
-
-    // newSrc = newSrc.replace(orgCode, newCode);
     return newSrc;
 };
 
-window.bonkCodeInjectors.push((bonkCode) => {
-    try {
-        console.log("Code injected for Parkour Generator for bonkAPI in injector.js.")
-        return bonkAPI.injector(bonkCode);
-    } catch (error) {
-        console.log('Code injection for parkour generator failed in injector.js.');
-        throw error;
-    }
-});
-
-window.bonkAPI.events.addEventListener("capZoneEvent", function (data) {
-    const { capID, playerID, currentFrame } = data;
-    console.log(`Player ${playerID} touched the cap zone ${capID} at frame ${currentFrame}`);
-});
-
-// ------------------------------
-// Keep Positions Injector Module
-// ------------------------------
-// From old keep-positions-manager.js
+// Keep positions injector
 pkrGeneratorX.keepPositionsInjector = function (str) {
     let newStr = str;
 
-    ///////////////////
-    // From host mod //
-    ///////////////////
+    try {
+        const BIGVAR = newStr.match(/[A-Za-z0-9$_]+\[[0-9]{6}\]/)[0].split("[")[0];
+        let stateCreationString = newStr.match(/[A-Za-z]\[...(\[[0-9]{1,4}\]){2}\]\(\[\{/)[0];
+        let stateCreationStringIndex = stateCreationString.match(/[0-9]{1,4}/g);
+        stateCreationStringIndex = stateCreationStringIndex[stateCreationStringIndex.length - 1];
 
-    const BIGVAR = newStr.match(/[A-Za-z0-9$_]+\[[0-9]{6}\]/)[0].split('[')[0];
-    let stateCreationString = newStr.match(
-        /[A-Za-z]\[...(\[[0-9]{1,4}\]){2}\]\(\[\{/
-    )[0];
-    let stateCreationStringIndex = stateCreationString.match(/[0-9]{1,4}/g);
-    stateCreationStringIndex =
-        stateCreationStringIndex[stateCreationStringIndex.length - 1];
-    let stateCreation = newStr.match(
-        `[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\]=[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[${stateCreationStringIndex}\\]\\].+?(?=;);`
-    )[0];
-    stateCreationString = stateCreation.split(']')[0] + ']';
+        let stateCreation = newStr.match(
+            `[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\]=[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[[A-Za-z0-9\$_]{3}\\[[0-9]{1,4}\\]\\[${stateCreationStringIndex}\\]\\].+?(?=;);`
+        )[0];
+        stateCreationString = stateCreation.split("]")[0] + "]";
 
-    const SET_STATE = `
+        const SET_STATE = `
               if (
                   ${BIGVAR}.bonkHost.state &&
                   !window.bonkHost.keepState &&
@@ -663,52 +737,71 @@ pkrGeneratorX.keepPositionsInjector = function (str) {
               };
               `;
 
-    const stateSetRegex = newStr.match(
-        /\* 999\),[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],null,[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],true\);/
-    )[0];
-    newStr = newStr.replace(stateSetRegex, stateSetRegex + SET_STATE);
+        const stateSetRegex = newStr.match(
+            /\* 999\),[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],null,[A-Za-z0-9\$_]{3}\[[0-9]{1,3}\],true\);/
+        )[0];
+        newStr = newStr.replace(stateSetRegex, stateSetRegex + SET_STATE);
+    } catch (error) {
+        console.error("Error in keepPositionsInjector:", error);
+    }
+
     return newStr;
 };
 
-// ------------------------------
-// Bonk Code Injectors Registration
-// ------------------------------
+// Register code injectors
 if (!window.bonkCodeInjectors) window.bonkCodeInjectors = [];
 
 window.bonkCodeInjectors.push((bonkCode) => {
     try {
-        console.log("Code injected for Parkour Generator for keepPositions in injector.js.")
-        return pkrGeneratorX.keepPositionsInjector(bonkCode);
+        console.log("pkrGeneratorX: Injecting bonkAPI code");
+        return bonkAPI.injector(bonkCode);
     } catch (error) {
-        console.log('Code injection for parkour generator failed in injector.js.');
+        console.error("bonkAPI injection failed:", error);
         throw error;
     }
 });
 
+window.bonkCodeInjectors.push((bonkCode) => {
+    try {
+        console.log("pkrGeneratorX: Injecting keepPositions code");
+        return pkrGeneratorX.keepPositionsInjector(bonkCode);
+    } catch (error) {
+        console.error("keepPositions injection failed:", error);
+        throw error;
+    }
+});
 
+// Event listeners
+window.bonkAPI.events.addEventListener("capZoneEvent", function (data) {
+    const { capID, playerID, currentFrame } = data;
+    // console.log(`Player ${playerID} touched cap zone ${capID} at frame ${currentFrame}`);
+});
 
-// Create the mod window using BonkHUD
+// UI Creation and Management
 pkrGeneratorX.createWindow = function () {
     const modIndex = bonkHUD.createMod(this.windowConfigs.windowName, this.windowConfigs);
     bonkHUD.loadUISetting(modIndex);
 
-    // Buttons only inserted after DOM is ready
+    // Button creation helper
     const insertButton = (id, label, onClick) => {
-        const btn = bonkHUD.generateButton(label);
-        btn.id = id;
-        btn.style.marginBottom = "5px";
-        btn.style.height = "25px";
+        const button = bonkHUD.generateButton(label);
+        button.id = id;
+        button.style.marginBottom = "5px";
+        button.style.height = "25px";
+
         const container = document.getElementById(`${id}-container`);
         if (container) {
-            container.appendChild(btn);
-            btn.addEventListener("click", onClick);
+            container.appendChild(button);
+            button.addEventListener("click", onClick);
         } else {
             console.warn(`Button container #${id}-container not found`);
         }
     };
 
+    // Insert all buttons
     insertButton("pkr-create-map-btn", "Create map", () => {
-        console.log("Create map clicked");
+        // console.log("Create map clicked");
+        this.mapManager.createMap();
     });
 
     insertButton("pkr-add-3-btn", "+3 Sec", () => this.timerModule.addTime(3));
@@ -718,79 +811,68 @@ pkrGeneratorX.createWindow = function () {
     insertButton("pkr-set-loop-btn", "Set loop duration", () => this.timerModule.setLoopDuration());
 };
 
-
-// ------------------------------
-// Build UI
-// ------------------------------
 pkrGeneratorX.setWindowContent = function () {
-
-    const mapOptionsPlaceholder = "<option value=''>Select map</option>";
-
-    const chatAlertsChecked = this.state?.chatAlerts ? "checked" : "";
-    const keepPositionsChecked = this.state?.keepPositions ? "checked" : "";
+    const chatAlertsChecked = this.state.chatAlerts ? "checked" : "";
+    const keepPositionsChecked = this.state.keepPositions ? "checked" : "";
 
     const container = document.createElement("div");
-
     container.innerHTML = `
- <!-- Map Selection Section -->
- <table class="bonkhud-background-color bonkhud-border-color" style="width:100%; margin-top:10px;">
-     <caption class="bonkhud-header-color">
-         <span class="bonkhud-title-color">Map Selection</span>
-     </caption>
-     <tr>
-         <td class="bonkhud-text-color">Group</td>
-         <td>
-            <select id="pkr-group-select" class="pkr-select">
-  <option value="">Select map group</option>
-</select>
-         </td>
-     </tr>
-     <tr>
-         <td class="bonkhud-text-color">Map</td>
-         <td>
-             <select id="pkr-map-select" class="pkr-select">
-                 ${mapOptionsPlaceholder}
-             </select>
-         </td>
-     </tr>
-     <tr>
+        <!-- Map Selection Section -->
+        <table class="bonkhud-background-color bonkhud-border-color" style="width:100%; margin-top:10px;">
+            <caption class="bonkhud-header-color">
+                <span class="bonkhud-title-color">Map Selection</span>
+            </caption>
+            <tr>
+                <td class="bonkhud-text-color">Group</td>
+                <td>
+                    <select id="pkr-group-select" class="pkr-select">
+                        <option value="">Select map group</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="bonkhud-text-color">Map</td>
+                <td>
+                    <select id="pkr-map-select" class="pkr-select">
+                        <option value="">Select map</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center; padding-top:5px;">
+                    <div id="pkr-create-map-btn-container" style="width:100%;"></div>
+                </td>
+            </tr>
+        </table>
 
-        <td colspan="2" style="text-align:center; padding-top:5px;">
-             <div id="pkr-create-map-btn-container" style="width:100%;"></div>
-         </td>
-     </tr>
- </table>
+        <!-- Timer Section -->
+        <table class="bonkhud-background-color bonkhud-border-color" style="margin-top:10px; width:100%;">
+            <caption class="bonkhud-header-color">
+                <span class="bonkhud-title-color">Timer</span>
+            </caption>
+            <tr>
+                <td colspan="2">
+                    <div id="pkr-timer-display" class="bonkhud-text-color" style="text-align:center; font-size:1.2em; padding: 5px 0;">
+                        00:00
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><div id="pkr-add-3-btn-container"></div></td>
+                <td><div id="pkr-sub-3-btn-container"></div></td>
+            </tr>
+            <tr>
+                <td><div id="pkr-startpause-btn-container"></div></td>
+                <td><div id="pkr-reset-btn-container"></div></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="pkr-set-loop-btn-container" style="text-align:center;"></div>
+                </td>
+            </tr>
+        </table>
 
-
-      <!-- Timer Section -->
-<table class="bonkhud-background-color bonkhud-border-color" style="margin-top:10px; width:100%;">
-    <caption class="bonkhud-header-color">
-        <span class="bonkhud-title-color">Timer</span>
-    </caption>
-    <tr>
-        <td colspan="2">
-            <div id="pkr-timer-display" class="bonkhud-text-color" style="text-align:center; font-size:1.2em; padding: 5px 0;">
-                00:00
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td><div id="pkr-add-3-btn-container"></div></td>
-        <td><div id="pkr-sub-3-btn-container"></div></td>
-    </tr>
-    <tr>
-        <td><div id="pkr-startpause-btn-container"></div></td>
-        <td><div id="pkr-reset-btn-container"></div></td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <div id="pkr-set-loop-btn-container" style="text-align:center;"></div>
-        </td>
-    </tr>
-</table>
-
-
-        <!-- Extra Checkboxes -->
+        <!-- Settings Section -->
         <table class="bonkhud-background-color bonkhud-border-color" style="margin-top:10px;">
             <tr>
                 <td class="bonkhud-text-color">
@@ -812,114 +894,106 @@ pkrGeneratorX.setWindowContent = function () {
     this.windowConfigs.windowContent = container;
 };
 
-pkrGeneratorX.populateGroupDropdown = function() {
-    const groupSel = document.getElementById("pkr-group-select");
+pkrGeneratorX.populateGroupDropdown = function () {
+    const groupSelect = this.getElement("pkr-group-select");
+    if (!groupSelect) return;
+
     const groups = Object.keys(this._mapsStructure["Type 1"] || {});
-    console.log("[UI] Available groups under Type 1:", groups);
-    groupSel.innerHTML = [
+    // console.log("[UI] Available groups:", groups);
+
+    groupSelect.innerHTML = [
         '<option value="">Select map group</option>',
-        ...groups.map(g => `<option value="${g}">${g}</option>`)
-    ].join('');
+        ...groups.map(group => `<option value="${group}">${group}</option>`)
+    ].join("");
 };
 
-
-
-
-// ------------------------------
-// Wire up Events
-// ------------------------------
 pkrGeneratorX.bindUI = function () {
-    const grp = document.getElementById("pkr-group-select");
-    const mp  = document.getElementById("pkr-map-select");
-    const btn = document.getElementById("pkr-create-map-btn");
+    const groupSelect = this.getElement("pkr-group-select");
+    const mapSelect = this.getElement("pkr-map-select");
+    const createButton = this.getElement("pkr-create-map-btn");
 
-    // populate groups after structure fetched
-    this.populateGroupDropdown();
-
-    const updateBtn = () => {
-        const ok = !!grp.value && !!mp.value;
-        btn.disabled = !ok;
-        console.log(`[bindUI] updateBtn — group: ${grp.value}, map: ${mp.value}, disabled: ${btn.disabled}`);
-    };
-
-    grp.addEventListener('change', () => {
-        const g = grp.value;
-        pkrGeneratorX.state.selectedGroup = g;
-        console.log("[UI] group changed →", g);
-
-        // drill into Type 1
-        const arr = (pkrGeneratorX._mapsStructure["Type 1"] || {})[g] || [];
-        console.log("[UI] maps for group", g, "→", arr);
-
-        mp.innerHTML = [
-            '<option value="">Select map</option>',
-            ...arr.map(m => `<option value="${m.mapId}">${m.mapName}</option>`)
-        ].join("");
-
-        pkrGeneratorX.state.selectedMapId = null;
-        updateBtn();
-    });
-
-
-    mp.addEventListener("change", () => {
-        const m = mp.value;
-        pkrGeneratorX.state.selectedMapId = m;
-        console.log("[bindUI] map changed →", m);
-        updateBtn();
-    });
-
-    btn.addEventListener("click", () => {
-        console.log("[bindUI] Create Map clicked with", {
-            group: pkrGeneratorX.state.selectedGroup,
-            mapId: pkrGeneratorX.state.selectedMapId
-        });
-        pkrGeneratorX.mapManager.createMap();
-    });
-
-    // Keep Positions Checkbox
-    const keepCheckbox = document.getElementById("pkr-keep-positions");
-    if (keepCheckbox) {
-        keepCheckbox.addEventListener("change", (e) => {
-            pkrGeneratorX.state.keepPositions = e.target.checked;
-            console.log("Keep positions:", pkrGeneratorX.state.keepPositions);
-        });
-    }
-
-    // Chat Alerts Checkbox
-    const chatCheckbox = document.getElementById("pkr-chat-alerts");
-    if (chatCheckbox) {
-        chatCheckbox.addEventListener("change", (e) => {
-            const checked = e.target.checked;
-            pkrGeneratorX.state.chatAlerts = !pkrGeneratorX.state.chatAlerts;
-        });
-    }
-
-
-    updateBtn();
-
-
-
-
-    // Checkboxes can be wired similarly when you add settings.save()
-};
-
-// ------------------------------
-// Initialization
-// ------------------------------
-pkrGeneratorX.initMod = async function () {
-    if (!window.bonkHUD) {
-        console.error("BonkHUD not loaded.");
+    if (!groupSelect || !mapSelect || !createButton) {
+        console.error("Required UI elements not found");
         return;
     }
 
-    await this.mapFetcher.fetchMapsStructure();
-    this.setWindowContent();
-    this.createWindow();
-    this.bindUI();
-    this.timerModule.updateDisplay();
-    console.log(this.windowConfigs.windowName, "initialized");
+    this.populateGroupDropdown();
+
+    const updateCreateButton = () => {
+        const isEnabled = !!(groupSelect.value && mapSelect.value);
+        createButton.disabled = !isEnabled;
+        // console.log(`[UI] Create button ${isEnabled ? 'enabled' : 'disabled'}`);
+    };
+
+    // Group selection handler
+    groupSelect.addEventListener("change", () => {
+        const selectedGroup = groupSelect.value;
+        this.state.selectedGroup = selectedGroup;
+       // console.log("[UI] Group selected:", selectedGroup);
+
+        const groupMaps = (this._mapsStructure["Type 1"] || {})[selectedGroup] || [];
+        // console.log("[UI] Maps for group:", groupMaps);
+
+        mapSelect.innerHTML = [
+            '<option value="">Select map</option>',
+            ...groupMaps.map(map => `<option value="${map.mapId}">${map.mapName}</option>`)
+        ].join("");
+
+        this.state.selectedMapId = null;
+        updateCreateButton();
+    });
+
+    // Map selection handler
+    mapSelect.addEventListener("change", () => {
+        const selectedMapId = mapSelect.value;
+        this.state.selectedMapId = selectedMapId;
+        // console.log("[UI] Map selected:", selectedMapId);
+        updateCreateButton();
+    });
+
+    // Settings handlers
+    const keepPositionsCheckbox = this.getElement("pkr-keep-positions");
+    if (keepPositionsCheckbox) {
+        keepPositionsCheckbox.addEventListener("change", (event) => {
+            this.state.keepPositions = event.target.checked;
+            // console.log("Keep positions:", this.state.keepPositions);
+        });
+    }
+
+    const chatAlertsCheckbox = this.getElement("pkr-chat-alerts");
+    if (chatAlertsCheckbox) {
+        chatAlertsCheckbox.addEventListener("change", (event) => {
+            this.state.chatAlerts = event.target.checked;
+            // console.log("Chat alerts:", this.state.chatAlerts);
+        });
+    }
+
+    updateCreateButton();
 };
 
+// Initialization
+pkrGeneratorX.initMod = async function () {
+    if (!window.bonkHUD) {
+        Utils.showNotification("BonkHUD not loaded.");
+        return;
+    }
+
+    try {
+        // console.log("Initializing pkrGeneratorX...");
+        Utils.showNotification("sdasdsad");
+
+        await this.mapFetcher.fetchMapsStructure();
+        this.setWindowContent();
+        this.createWindow();
+        this.bindUI();
+        this.timerModule.updateDisplay();
+
+        // console.log(this.windowConfigs.windowName, "initialized successfully");
+    } catch (error) {
+        console.error("Failed to initialize pkrGeneratorX:", error);
+        Utils.showNotification("Failed to initialize mod. Check console for details.");
+    }
+};
 
 pkrGeneratorX.onDocumentReady = function () {
     if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -929,5 +1003,5 @@ pkrGeneratorX.onDocumentReady = function () {
     }
 };
 
-
+// Start the application
 pkrGeneratorX.onDocumentReady();
