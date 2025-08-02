@@ -291,7 +291,6 @@ const addPkrDiv = () => {
         </div>
         <div class="bonkhud-settings-row">
             <div id="copyMapButtonContainer"></div>
-            <div class="bonkhud-settings-label" style="margin-left: 5px;">(ALT + 5)</div>
         </div>
 
     `;
@@ -359,11 +358,7 @@ const addPkrDiv = () => {
         }
     });
 
-    document.addEventListener("keydown", (event) => {
-        if (event.altKey && event.code === "Digit5") {
-            convertGameDataToJSON();
-        }
-    });
+    
 
     // Function to handle pasting data and starting the game
     const pasteAndStart = async() => {
