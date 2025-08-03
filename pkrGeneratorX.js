@@ -980,7 +980,6 @@ pkrGeneratorX.initMod = async function () {
 
     try {
         // console.log("Initializing pkrGeneratorX...");
-        Utils.showNotification("sdasdsad");
 
         await this.mapFetcher.fetchMapsStructure();
         this.setWindowContent();

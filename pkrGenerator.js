@@ -37,6 +37,43 @@ posRecorder.isRecording = false;
 posRecorder.recordingIntervalId = null;
 posRecorder.inputState = null;
 
+// Utility functions
+const Utils = {
+
+    showNotification(message, duration = 3000) {
+        const note = document.createElement('div');
+        note.textContent = message;
+        Object.assign(note.style, {
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#222',
+            color: '#fff',
+            padding: '10px 20px',
+            borderRadius: '6px',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+            fontSize: '14px',
+            zIndex: 9999,
+            opacity: 0,
+            transition: 'opacity 0.3s ease-in-out'
+        });
+
+        document.body.appendChild(note);
+        requestAnimationFrame(() => {
+            note.style.opacity = 1;
+        });
+
+        setTimeout(() => {
+            note.style.opacity = 0;
+            note.addEventListener('transitionend', () => {
+                note.remove();
+            }, { once: true });
+        }, duration);
+    }
+
+};
+
 // Event listener function to change the player selected in the player selector
 posRecorder.select_player = () => {
     let player_selector = document.getElementById("posRecorder_player_selector");
@@ -371,11 +408,11 @@ const addPkrDiv = () => {
                 }
                 window.bonkHost.startGame();
             } else {
-                showNotification("Clipboard is empty. Copy map data first.");
+                Utils.showNotification("Clipboard is empty. Copy map data first.");
             }
         } catch (err) {
             console.error("Failed to read clipboard contents: ", err);
-            showNotification("Failed to read clipboard.");
+            Utils.showNotification("Failed to read clipboard.");
         }
     };
 
@@ -546,7 +583,7 @@ async function createAndSetMap(inputText) {
         w.bonkHost.menuFunctions.setGameSettings(gs);
         w.bonkHost.menuFunctions.updateGameSettings();
 
-        showNotification('Map created successfully!');
+        Utils.showNotification('Map created successfully!');
     } catch (e) {
         console.error('An error occurred while creating the map:', e);
         // showNotification("Failed to create the map. Check the console for errors.");
